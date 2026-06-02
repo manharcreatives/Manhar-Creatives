@@ -1,0 +1,21 @@
+{
+  "name": "Manhar Creatives — Website Development, Branding & Digital Solutions",
+  "short_name": "Manhar Creatives",
+  "description": "Website development, branding & digital solutions agency serving Ahmedabad, Mehsana, Visnagar and all of Gujarat.",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#0B0F0E",
+  "theme_color": "#0B0F0E",
+  "icons": [
+    {
+      "src": "/favicon.png",
+      "sizes": "192x192",
+      "type": "image/png"
+    },
+    {
+      "src": "/favicon.png",
+      "sizes": "512x512",
+      "type": "image/png"
+    }
+  ]
+}
