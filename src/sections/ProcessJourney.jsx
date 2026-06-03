@@ -183,6 +183,8 @@ export default function ProcessJourney() {
                     <img
                       src={PROCESS_DATA[hoveredIndex].image}
                       alt={PROCESS_DATA[hoveredIndex].title}
+                      loading="lazy"
+                      decoding="async"
                       style={{ width: '100%', height: '100%', objectFit: 'cover' }}
                     />
                   </motion.div>

@@ -17,22 +17,27 @@ import ContactExperience from './sections/ContactExperience';
 import CinematicFooter from './sections/CinematicFooter';
 import NoMatch from './sections/NoMatch';
 import ServiceCityPage from './sections/ServiceCityPage';
+import ServicePage from './sections/ServicePage';
 import BlogPage from './sections/BlogPage';
 
-const CITY_ROUTES = {
-  'website-development-in-ahmedabad': 'ahmedabad',
-  'website-development-in-mehsana': 'mehsana',
-  'website-development-in-visnagar': 'visnagar',
-  'branding-in-ahmedabad': 'ahmedabad',
-  'branding-in-mehsana': 'mehsana',
-  'branding-in-visnagar': 'visnagar',
-  'restaurant-solutions-in-ahmedabad': 'ahmedabad',
-  'restaurant-solutions-in-mehsana': 'mehsana',
-  'restaurant-solutions-in-visnagar': 'visnagar',
-  'digital-presence-in-ahmedabad': 'ahmedabad',
-  'digital-presence-in-mehsana': 'mehsana',
-  'digital-presence-in-visnagar': 'visnagar',
+const SERVICE_SLUGS = {
+  'web-development': 'web-dev',
+  'restaurant-solutions': 'restaurant',
+  'branding': 'branding',
+  'social-media-design': 'social',
+  'print-branding': 'print',
+  'digital-presence': 'digital-presence',
 };
+
+const CITY_KEYS = ['ahmedabad', 'mehsana', 'visnagar'];
+
+function parseServiceCityPath(path) {
+  const match = path.match(/^(.+)-in-(ahmedabad|mehsana|visnagar)$/);
+  if (!match) return null;
+  const slug = match[1];
+  const city = match[2];
+  return SERVICE_SLUGS[slug] ? { serviceId: SERVICE_SLUGS[slug], city } : null;
+}
 
 function useRoute() {
   const [route, setRoute] = useState({ type: 'home', params: {} });
@@ -46,7 +51,17 @@ function useRoute() {
       if (path.startsWith('blog/')) return setRoute({ type: 'blogArticle', params: { slug: path.replace('blog/', '') } });
       if (path === 'blog') return setRoute({ type: 'blog', params: {} });
 
-      if (CITY_ROUTES[path]) return setRoute({ type: 'city', params: { city: CITY_ROUTES[path], path } });
+      if (CITY_KEYS.includes(path)) return setRoute({ type: 'city', params: { city: path, serviceId: null, path } });
+
+      const sc = parseServiceCityPath(path);
+      if (sc) return setRoute({ type: 'city', params: { city: sc.city, serviceId: sc.serviceId, path } });
+
+      if (path.startsWith('services/')) {
+        const slug = path.replace('services/', '');
+        if (SERVICE_SLUGS[slug]) return setRoute({ type: 'service', params: { serviceId: SERVICE_SLUGS[slug], path } });
+      }
+
+      if (path === 'services') return setRoute({ type: 'services', params: {} });
 
       return setRoute({ type: '404', params: {} });
     };
@@ -75,11 +90,26 @@ export default function App() {
     );
   }
 
+  if (route.type === 'service') {
+    return (
+      <>
+        <Navigation />
+        <ServicePage serviceId={route.params.serviceId} />
+        <CinematicFooter />
+      </>
+    );
+  }
+
+  if (route.type === 'services') {
+    window.location.href = '/#services';
+    return null;
+  }
+
   if (route.type === 'city') {
     return (
       <>
         <Navigation />
-        <ServiceCityPage city={route.params.city} />
+        <ServiceCityPage city={route.params.city} serviceId={route.params.serviceId} />
         <CinematicFooter />
       </>
     );
