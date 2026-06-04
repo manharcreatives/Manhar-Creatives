@@ -60,16 +60,20 @@ function FullscreenProject({ project, index }) {
       ) : (
         <>
           {/* Background Image with Parallax */}
-          <motion.div style={{
-            position: 'absolute',
-            inset: -100,
-            backgroundImage: `url(${project.image})`,
-            backgroundSize: 'cover',
-            backgroundPosition: 'center',
-            y,
-            scale,
-            zIndex: 0
-          }} />
+          <motion.div
+            role="img"
+            aria-label={`${project.title} showcase`}
+            style={{
+              position: 'absolute',
+              inset: -100,
+              backgroundImage: `url(${project.image})`,
+              backgroundSize: 'cover',
+              backgroundPosition: 'center',
+              y,
+              scale,
+              zIndex: 0
+            }}
+          />
 
           {/* Dark Gradient Overlay for text readability */}
           <div style={{

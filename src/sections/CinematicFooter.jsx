@@ -380,6 +380,31 @@ export default function CinematicFooter() {
           <SocialLink href="https://instagram.com/manhar.creatives" icon="✦" label="@manhar.creatives" />
           <SocialLink href="mailto:manharcreatives@gmail.com"        icon="◎"  label="Email Us"          />
           <SocialLink href="tel:+919714571522"                       icon="◈" label="+91 97145 71522"   />
+          <a
+            href="https://drive.google.com/uc?export=download&id=1RdGn0DZyyL_f2liZHFeJVqLUyYGWKSny"
+            target="_blank"
+            rel="noopener noreferrer"
+            style={{
+              display: 'inline-flex', alignItems: 'center', gap: '10px',
+              padding: '10px 20px', borderRadius: '9999px',
+              border: '1px solid rgba(255,255,255,0.08)',
+              textDecoration: 'none',
+              color: 'rgba(255,255,255,0.5)',
+              fontSize: '0.8125rem', fontFamily: 'var(--font-mono)',
+              letterSpacing: '0.1em',
+              transition: 'all 0.22s',
+            }}
+            onMouseEnter={e => { e.currentTarget.style.borderColor = 'rgba(34,197,94,0.6)'; e.currentTarget.style.background = 'rgba(34,197,94,0.08)'; e.currentTarget.style.color = '#22C55E'; e.currentTarget.style.boxShadow = '0 8px 28px rgba(34,197,94,0.2)'; e.currentTarget.style.transform = 'translateY(-4px)' }}
+            onMouseLeave={e => { e.currentTarget.style.borderColor = 'rgba(255,255,255,0.08)'; e.currentTarget.style.background = 'rgba(0,0,0,0)'; e.currentTarget.style.color = 'rgba(255,255,255,0.5)'; e.currentTarget.style.boxShadow = '0 0 0px rgba(34,197,94,0)'; e.currentTarget.style.transform = 'translateY(0)' }}
+          >
+            <span style={{ fontSize: '1.2rem', display: 'flex', lineHeight: 1 }}>
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round" style={{ display: 'block' }}>
+                <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
+                <polyline points="7 10 12 15 17 10"/>
+                <line x1="12" y1="15" x2="12" y2="3"/>
+              </svg>
+            </span>Company Profile
+          </a>
         </ViewAnimator>
 
         {/* ══ GIANT MANHAR - per-letter hover glow ════════ */}

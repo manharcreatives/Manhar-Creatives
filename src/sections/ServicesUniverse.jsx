@@ -104,6 +104,8 @@ function ServiceBlock({ service, index }) {
     >
       {/* Parallax Background Image */}
       <motion.div
+        role="img"
+        aria-label={`${service.title} background`}
         style={{
           position: 'absolute',
           inset: isMobile ? 0 : -100,
@@ -178,11 +180,15 @@ function ServiceBlock({ service, index }) {
               borderRadius: '8px', overflow: 'hidden',
               boxShadow: '0 20px 48px rgba(0,0,0,0.6)',
             }}>
-              <div style={{
-                position: 'absolute', inset: 0,
-                backgroundImage: `url(${service.image})`,
-                backgroundSize: 'cover', backgroundPosition: 'center',
-              }} />
+              <img
+                src={service.image}
+                alt={`${service.title} — ${service.description.slice(0, 80)}`}
+                loading="lazy"
+                style={{
+                  position: 'absolute', inset: 0, width: '100%', height: '100%',
+                  objectFit: 'cover',
+                }}
+              />
               <div style={{
                 position: 'absolute', inset: 0,
                 border: '1px solid rgba(255,255,255,0.08)',
@@ -253,12 +259,16 @@ function ServiceBlock({ service, index }) {
                 borderRadius: '2px', overflow: 'hidden',
                 boxShadow: '0 30px 60px rgba(0,0,0,0.5)',
               }}>
-                <motion.div style={{
-                  position: 'absolute', inset: -20,
-                  backgroundImage: `url(${service.image})`,
-                  backgroundSize: 'cover', backgroundPosition: 'center',
-                  y: fgY,
-                }} />
+                <motion.div
+                  role="img"
+                  aria-label={`${service.title} showcase`}
+                  style={{
+                    position: 'absolute', inset: -20,
+                    backgroundImage: `url(${service.image})`,
+                    backgroundSize: 'cover', backgroundPosition: 'center',
+                    y: fgY,
+                  }}
+                />
                 <div style={{
                   position: 'absolute', inset: 0,
                   border: '1px solid rgba(255,255,255,0.1)',
@@ -278,7 +288,7 @@ export default function ServicesUniverse() {
   return (
     <section id="services" style={{ background: 'var(--bg)', position: 'relative' }}>
       {/* Background Image for Header */}
-      <div style={{
+      <div aria-hidden="true" style={{
         position: 'absolute', top: 0, left: 0, right: 0, height: '600px', zIndex: 0,
         backgroundImage: 'url(https://res.cloudinary.com/dm2hjn5wp/image/upload/q_auto/f_auto/v1780201825/ChatGPT_Image_May_31_2026_10_00_07_AM_mqqytv.png)',
         backgroundSize: 'cover', backgroundPosition: 'center',

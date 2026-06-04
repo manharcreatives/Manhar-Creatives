@@ -270,6 +270,18 @@ export default function ContactExperience() {
                       </div>
                     )}
 
+                    <div style={{ marginTop: '24px', padding: '20px 24px', border: '1px solid rgba(255,255,255,0.08)', borderRadius: '16px', background: 'rgba(255,255,255,0.03)' }}>
+                      <p style={{ color: 'rgba(255,255,255,0.7)', fontSize: '0.9375rem', marginBottom: '6px', fontWeight: 500 }}>
+                        Need more information before getting started?
+                      </p>
+                      <p style={{ color: 'rgba(255,255,255,0.4)', fontSize: '0.875rem', lineHeight: 1.6, marginBottom: '16px' }}>
+                        Download our Company Profile to explore our services and process.
+                      </p>
+                      <MagneticButton as="a" href="https://drive.google.com/uc?export=download&id=1RdGn0DZyyL_f2liZHFeJVqLUyYGWKSny" target="_blank" rel="noopener noreferrer" className="btn btn-secondary" style={{ padding: '12px 28px', fontSize: '0.8125rem', width: 'fit-content', border: '1px solid rgba(255,255,255,0.15)', borderRadius: '40px', color: 'rgba(255,255,255,0.85)', background: 'transparent' }}>
+                        ↓ Download Company Profile
+                      </MagneticButton>
+                    </div>
+
                     <div style={{ marginTop: '24px' }}>
                       <MagneticButton className="btn btn-primary" style={{ padding: '18px 40px', fontSize: '1rem', width: 'fit-content' }}>
                         Send Inquiry

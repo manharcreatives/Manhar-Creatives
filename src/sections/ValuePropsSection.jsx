@@ -100,16 +100,18 @@ export default function ValuePropsSection() {
                 }}
               >
                 {/* Image — 150px height */}
-                <div className="value-prop-image" style={{
-                  width: '100%',
-                  height: '150px',
-                  borderRadius: '4px',
-                  overflow: 'hidden',
-                  marginBottom: '20px',
-                  backgroundImage: `url(${prop.image})`,
-                  backgroundSize: 'cover',
-                  backgroundPosition: 'center',
-                }} />
+                <img className="value-prop-image"
+                  src={prop.image}
+                  alt={`${prop.title} — ${prop.description.slice(0, 60)}`}
+                  loading="lazy"
+                  style={{
+                    width: '100%',
+                    height: '150px',
+                    borderRadius: '4px',
+                    objectFit: 'cover',
+                    marginBottom: '20px',
+                  }}
+                />
                 <span style={{
                   fontFamily: 'var(--font-mono)',
                   fontSize: '0.75rem',

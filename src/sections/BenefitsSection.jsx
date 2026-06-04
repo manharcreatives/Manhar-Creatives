@@ -44,7 +44,7 @@ export default function BenefitsSection() {
   return (
     <section style={{ background: 'var(--bg)', padding: '160px 0', position: 'relative', overflow: 'hidden' }}>
       {/* Background Image for Header */}
-      <div style={{
+      <div aria-hidden="true" style={{
         position: 'absolute', top: 0, left: 0, right: 0, height: '550px', zIndex: 0,
         backgroundImage: 'url(https://res.cloudinary.com/dm2hjn5wp/image/upload/q_auto/f_auto/v1780202833/ChatGPT_Image_May_31_2026_10_16_57_AM_wfkjfn.png)',
         backgroundSize: 'cover', backgroundPosition: 'center',
@@ -108,16 +108,18 @@ export default function BenefitsSection() {
                   flexDirection: 'column',
                 }}
               >
-                <div className="benefit-image" style={{
-                  width: '100%',
-                  height: '160px',
-                  borderRadius: '4px',
-                  overflow: 'hidden',
-                  marginBottom: '24px',
-                  backgroundImage: `url(${benefit.image})`,
-                  backgroundSize: 'cover',
-                  backgroundPosition: 'center',
-                }} />
+                <img className="benefit-image"
+                  src={benefit.image}
+                  alt={`${benefit.title} — ${benefit.description.slice(0, 60)}`}
+                  loading="lazy"
+                  style={{
+                    width: '100%',
+                    height: '160px',
+                    borderRadius: '4px',
+                    objectFit: 'cover',
+                    marginBottom: '24px',
+                  }}
+                />
                 <div className="benefit-icon" style={{
                   width: '48px', height: '48px',
                   borderRadius: 'var(--radius-sm)',
