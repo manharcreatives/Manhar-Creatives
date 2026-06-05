@@ -6,10 +6,10 @@ import MagneticButton from '../components/MagneticButton';
 const PROJECT_TYPES = ['Website', 'Branding', 'Restaurant Solutions', 'Print', 'Digital Presence', 'Other'];
 
 export default function ContactExperience() {
-  const [formData, setFormData] = useState({ name: '', company: '', email: '', phone: '', type: '', otherType: '', message: '', contactMethod: 'Email' });
+  const [formData, setFormData] = useState({ name: '', company: '', email: '', phone: '', address: '', type: '', otherType: '', message: '', contactMethod: 'Email' });
   const [submitted, setSubmitted] = useState(false);
   const [submitError, setSubmitError] = useState(false);
-  const INITIAL_FORM = { name: '', company: '', email: '', phone: '', type: '', otherType: '', message: '', contactMethod: 'Email' };
+  const INITIAL_FORM = { name: '', company: '', email: '', phone: '', address: '', type: '', otherType: '', message: '', contactMethod: 'Email' };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -19,7 +19,7 @@ export default function ContactExperience() {
     try {
       const fd = new FormData();
       Object.entries(payload).forEach(([k, v]) => fd.append(k, v));
-      await fetch('https://script.google.com/macros/s/AKfycbzaaVNWhKmrmCa89rZcTj8MMRutZe-NiBtINaAi_O1JF9KCZv6yv_hceP5ezgdDDydDAQ/exec', {
+      await fetch('https://script.google.com/macros/s/AKfycbyKRyD8W4ppEvbYopADHNoGVzB0fs3lRX5E3jbTrdoDpJo6b4H8FdQzJa8nxs83y_yGIg/exec', {
         method: 'POST',
         body: fd
       });
@@ -183,6 +183,19 @@ export default function ContactExperience() {
                         placeholder="Phone Number" 
                         type="tel" required value={formData.phone} 
                         onChange={e => setFormData({...formData, phone: e.target.value})}
+                        style={inputStyle} 
+                        onFocus={e => e.target.style.borderColor = 'var(--color-primary)'} 
+                        onBlur={e => e.target.style.borderColor = 'rgba(255,255,255,0.2)'} 
+                      />
+                    </div>
+
+                    <div>
+                      <label htmlFor="contact-address" style={{ position: 'absolute', width: '1px', height: '1px', overflow: 'hidden', clip: 'rect(0,0,0,0)' }}>Address / Location</label>
+                      <input 
+                        id="contact-address"
+                        placeholder="Address / Location" 
+                        value={formData.address} 
+                        onChange={e => setFormData({...formData, address: e.target.value})}
                         style={inputStyle} 
                         onFocus={e => e.target.style.borderColor = 'var(--color-primary)'} 
                         onBlur={e => e.target.style.borderColor = 'rgba(255,255,255,0.2)'} 

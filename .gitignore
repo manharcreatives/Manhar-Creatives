@@ -12,6 +12,8 @@ dist
 dist-ssr
 *.local
 
+docs/
+
 SEO-TODO.md
 # Editor directories and files
 .vscode/*
