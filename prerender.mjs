@@ -4,6 +4,11 @@ import { readFileSync, writeFileSync } from 'fs';
 import { extname, join } from 'path';
 import { fileURLToPath } from 'url';
 
+if (process.env.VERCEL || process.env.CI) {
+  console.log('[prerender] Skipping in CI/Vercel environment');
+  process.exit(0);
+}
+
 const PORT = 45678;
 const DIST = join(fileURLToPath(new URL('.', import.meta.url)), 'dist');
 
