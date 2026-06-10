@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { motion } from 'framer-motion';
 import { FadeIn } from '../components/TextReveal';
 import MagneticButton from '../components/MagneticButton';
+import { supabase } from '../lib/supabase';
 
 const PROJECT_TYPES = ['Website', 'Branding', 'Restaurant Solutions', 'Print', 'Digital Presence', 'Other'];
 
@@ -27,6 +28,33 @@ export default function ContactExperience() {
       setSubmitError(true);
       setTimeout(() => setSubmitError(false), 6000);
       return;
+    }
+    // Also insert into CRM's Supabase as a new client
+    try {
+      const { data: existing } = await supabase
+        .from('clients')
+        .select('id')
+        .order('id', { ascending: false })
+        .limit(1);
+      const maxNum = existing?.length > 0
+        ? parseInt(existing[0].id?.replace('MC-CL-', '') || '0', 10)
+        : 0;
+      const newId = `MC-CL-${String(maxNum + 1).padStart(4, '0')}`;
+      await supabase.from('clients').insert([{
+        id: newId,
+        timestamp: new Date().toISOString(),
+        source: 'Website',
+        name: formData.name,
+        business: formData.company || '',
+        phone: formData.phone,
+        email: formData.email || '',
+        location: formData.address || '',
+        services: formData.type === 'Other' ? formData.otherType : formData.type,
+        requirement: formData.message || '',
+        contact_method: formData.contactMethod,
+      }]);
+    } catch (err) {
+      console.error('Supabase insert failed:', err);
     }
     setSubmitted(true);
     setTimeout(() => {
