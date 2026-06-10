@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useRef, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { FadeIn } from '../components/TextReveal';
 import MagneticButton from '../components/MagneticButton';
@@ -7,25 +7,418 @@ import { supabase } from '../lib/supabase';
 const PROJECT_TYPES = ['Website', 'Branding', 'Restaurant Solutions', 'Print', 'Digital Presence', 'Other'];
 
 const COUNTRY_CODES = [
-  { code: '+91', country: 'India' },
-  { code: '+1', country: 'US/Canada' },
-  { code: '+44', country: 'UK' },
+  { code: '+93', country: 'Afghanistan' },
+  { code: '+355', country: 'Albania' },
+  { code: '+213', country: 'Algeria' },
+  { code: '+376', country: 'Andorra' },
+  { code: '+244', country: 'Angola' },
+  { code: '+1', country: 'Anguilla' },
+  { code: '+1', country: 'Antigua & Barbuda' },
+  { code: '+54', country: 'Argentina' },
+  { code: '+374', country: 'Armenia' },
+  { code: '+297', country: 'Aruba' },
   { code: '+61', country: 'Australia' },
-  { code: '+971', country: 'UAE' },
-  { code: '+65', country: 'Singapore' },
-  { code: '+966', country: 'Saudi Arabia' },
-  { code: '+974', country: 'Qatar' },
-  { code: '+968', country: 'Oman' },
+  { code: '+43', country: 'Austria' },
+  { code: '+994', country: 'Azerbaijan' },
+  { code: '+1', country: 'Bahamas' },
   { code: '+973', country: 'Bahrain' },
-  { code: '+92', country: 'Pakistan' },
   { code: '+880', country: 'Bangladesh' },
-  { code: '+977', country: 'Nepal' },
-  { code: '+94', country: 'Sri Lanka' },
-  { code: '+60', country: 'Malaysia' },
-  { code: '+49', country: 'Germany' },
+  { code: '+1', country: 'Barbados' },
+  { code: '+375', country: 'Belarus' },
+  { code: '+32', country: 'Belgium' },
+  { code: '+501', country: 'Belize' },
+  { code: '+229', country: 'Benin' },
+  { code: '+1', country: 'Bermuda' },
+  { code: '+975', country: 'Bhutan' },
+  { code: '+591', country: 'Bolivia' },
+  { code: '+387', country: 'Bosnia & Herzegovina' },
+  { code: '+267', country: 'Botswana' },
+  { code: '+55', country: 'Brazil' },
+  { code: '+1', country: 'British Virgin Islands' },
+  { code: '+673', country: 'Brunei' },
+  { code: '+359', country: 'Bulgaria' },
+  { code: '+226', country: 'Burkina Faso' },
+  { code: '+257', country: 'Burundi' },
+  { code: '+855', country: 'Cambodia' },
+  { code: '+237', country: 'Cameroon' },
+  { code: '+1', country: 'Canada' },
+  { code: '+238', country: 'Cape Verde' },
+  { code: '+1', country: 'Cayman Islands' },
+  { code: '+236', country: 'Central African Republic' },
+  { code: '+235', country: 'Chad' },
+  { code: '+56', country: 'Chile' },
+  { code: '+86', country: 'China' },
+  { code: '+57', country: 'Colombia' },
+  { code: '+269', country: 'Comoros' },
+  { code: '+242', country: 'Congo' },
+  { code: '+682', country: 'Cook Islands' },
+  { code: '+506', country: 'Costa Rica' },
+  { code: '+225', country: "Côte d'Ivoire" },
+  { code: '+385', country: 'Croatia' },
+  { code: '+53', country: 'Cuba' },
+  { code: '+599', country: 'Curaçao' },
+  { code: '+357', country: 'Cyprus' },
+  { code: '+420', country: 'Czech Republic' },
+  { code: '+45', country: 'Denmark' },
+  { code: '+253', country: 'Djibouti' },
+  { code: '+1', country: 'Dominica' },
+  { code: '+1', country: 'Dominican Republic' },
+  { code: '+243', country: 'DR Congo' },
+  { code: '+593', country: 'Ecuador' },
+  { code: '+20', country: 'Egypt' },
+  { code: '+503', country: 'El Salvador' },
+  { code: '+240', country: 'Equatorial Guinea' },
+  { code: '+291', country: 'Eritrea' },
+  { code: '+372', country: 'Estonia' },
+  { code: '+268', country: 'Eswatini' },
+  { code: '+251', country: 'Ethiopia' },
+  { code: '+500', country: 'Falkland Islands' },
+  { code: '+298', country: 'Faroe Islands' },
+  { code: '+679', country: 'Fiji' },
+  { code: '+358', country: 'Finland' },
   { code: '+33', country: 'France' },
+  { code: '+594', country: 'French Guiana' },
+  { code: '+689', country: 'French Polynesia' },
+  { code: '+241', country: 'Gabon' },
+  { code: '+220', country: 'Gambia' },
+  { code: '+995', country: 'Georgia' },
+  { code: '+49', country: 'Germany' },
+  { code: '+233', country: 'Ghana' },
+  { code: '+350', country: 'Gibraltar' },
+  { code: '+30', country: 'Greece' },
+  { code: '+299', country: 'Greenland' },
+  { code: '+1', country: 'Grenada' },
+  { code: '+590', country: 'Guadeloupe' },
+  { code: '+1', country: 'Guam' },
+  { code: '+502', country: 'Guatemala' },
+  { code: '+44', country: 'Guernsey' },
+  { code: '+224', country: 'Guinea' },
+  { code: '+245', country: 'Guinea-Bissau' },
+  { code: '+592', country: 'Guyana' },
+  { code: '+509', country: 'Haiti' },
+  { code: '+504', country: 'Honduras' },
+  { code: '+852', country: 'Hong Kong' },
+  { code: '+36', country: 'Hungary' },
+  { code: '+354', country: 'Iceland' },
+  { code: '+91', country: 'India' },
+  { code: '+62', country: 'Indonesia' },
+  { code: '+98', country: 'Iran' },
+  { code: '+964', country: 'Iraq' },
+  { code: '+353', country: 'Ireland' },
+  { code: '+44', country: 'Isle of Man' },
+  { code: '+972', country: 'Israel' },
+  { code: '+39', country: 'Italy' },
+  { code: '+1', country: 'Jamaica' },
   { code: '+81', country: 'Japan' },
+  { code: '+44', country: 'Jersey' },
+  { code: '+962', country: 'Jordan' },
+  { code: '+7', country: 'Kazakhstan' },
+  { code: '+254', country: 'Kenya' },
+  { code: '+686', country: 'Kiribati' },
+  { code: '+383', country: 'Kosovo' },
+  { code: '+965', country: 'Kuwait' },
+  { code: '+996', country: 'Kyrgyzstan' },
+  { code: '+856', country: 'Laos' },
+  { code: '+371', country: 'Latvia' },
+  { code: '+961', country: 'Lebanon' },
+  { code: '+266', country: 'Lesotho' },
+  { code: '+231', country: 'Liberia' },
+  { code: '+218', country: 'Libya' },
+  { code: '+423', country: 'Liechtenstein' },
+  { code: '+370', country: 'Lithuania' },
+  { code: '+352', country: 'Luxembourg' },
+  { code: '+853', country: 'Macau' },
+  { code: '+261', country: 'Madagascar' },
+  { code: '+265', country: 'Malawi' },
+  { code: '+60', country: 'Malaysia' },
+  { code: '+960', country: 'Maldives' },
+  { code: '+223', country: 'Mali' },
+  { code: '+356', country: 'Malta' },
+  { code: '+692', country: 'Marshall Islands' },
+  { code: '+596', country: 'Martinique' },
+  { code: '+222', country: 'Mauritania' },
+  { code: '+230', country: 'Mauritius' },
+  { code: '+262', country: 'Mayotte' },
+  { code: '+52', country: 'Mexico' },
+  { code: '+691', country: 'Micronesia' },
+  { code: '+373', country: 'Moldova' },
+  { code: '+377', country: 'Monaco' },
+  { code: '+976', country: 'Mongolia' },
+  { code: '+382', country: 'Montenegro' },
+  { code: '+1', country: 'Montserrat' },
+  { code: '+212', country: 'Morocco' },
+  { code: '+258', country: 'Mozambique' },
+  { code: '+95', country: 'Myanmar' },
+  { code: '+264', country: 'Namibia' },
+  { code: '+674', country: 'Nauru' },
+  { code: '+977', country: 'Nepal' },
+  { code: '+31', country: 'Netherlands' },
+  { code: '+687', country: 'New Caledonia' },
+  { code: '+64', country: 'New Zealand' },
+  { code: '+505', country: 'Nicaragua' },
+  { code: '+227', country: 'Niger' },
+  { code: '+234', country: 'Nigeria' },
+  { code: '+683', country: 'Niue' },
+  { code: '+850', country: 'North Korea' },
+  { code: '+389', country: 'North Macedonia' },
+  { code: '+1', country: 'Northern Mariana Islands' },
+  { code: '+47', country: 'Norway' },
+  { code: '+968', country: 'Oman' },
+  { code: '+92', country: 'Pakistan' },
+  { code: '+680', country: 'Palau' },
+  { code: '+970', country: 'Palestine' },
+  { code: '+507', country: 'Panama' },
+  { code: '+675', country: 'Papua New Guinea' },
+  { code: '+595', country: 'Paraguay' },
+  { code: '+51', country: 'Peru' },
+  { code: '+63', country: 'Philippines' },
+  { code: '+48', country: 'Poland' },
+  { code: '+351', country: 'Portugal' },
+  { code: '+1', country: 'Puerto Rico' },
+  { code: '+974', country: 'Qatar' },
+  { code: '+262', country: 'Réunion' },
+  { code: '+40', country: 'Romania' },
+  { code: '+7', country: 'Russia' },
+  { code: '+250', country: 'Rwanda' },
+  { code: '+590', country: 'Saint Barthélemy' },
+  { code: '+290', country: 'Saint Helena' },
+  { code: '+1', country: 'Saint Kitts & Nevis' },
+  { code: '+1', country: 'Saint Lucia' },
+  { code: '+590', country: 'Saint Martin' },
+  { code: '+508', country: 'Saint Pierre & Miquelon' },
+  { code: '+1', country: 'Saint Vincent & Grenadines' },
+  { code: '+685', country: 'Samoa' },
+  { code: '+378', country: 'San Marino' },
+  { code: '+239', country: 'São Tomé & Príncipe' },
+  { code: '+966', country: 'Saudi Arabia' },
+  { code: '+221', country: 'Senegal' },
+  { code: '+381', country: 'Serbia' },
+  { code: '+248', country: 'Seychelles' },
+  { code: '+232', country: 'Sierra Leone' },
+  { code: '+65', country: 'Singapore' },
+  { code: '+1', country: 'Sint Maarten' },
+  { code: '+421', country: 'Slovakia' },
+  { code: '+386', country: 'Slovenia' },
+  { code: '+677', country: 'Solomon Islands' },
+  { code: '+252', country: 'Somalia' },
+  { code: '+27', country: 'South Africa' },
+  { code: '+82', country: 'South Korea' },
+  { code: '+211', country: 'South Sudan' },
+  { code: '+34', country: 'Spain' },
+  { code: '+94', country: 'Sri Lanka' },
+  { code: '+249', country: 'Sudan' },
+  { code: '+597', country: 'Suriname' },
+  { code: '+46', country: 'Sweden' },
+  { code: '+41', country: 'Switzerland' },
+  { code: '+963', country: 'Syria' },
+  { code: '+886', country: 'Taiwan' },
+  { code: '+992', country: 'Tajikistan' },
+  { code: '+255', country: 'Tanzania' },
+  { code: '+66', country: 'Thailand' },
+  { code: '+670', country: 'Timor-Leste' },
+  { code: '+228', country: 'Togo' },
+  { code: '+690', country: 'Tokelau' },
+  { code: '+676', country: 'Tonga' },
+  { code: '+1', country: 'Trinidad & Tobago' },
+  { code: '+216', country: 'Tunisia' },
+  { code: '+90', country: 'Turkey' },
+  { code: '+993', country: 'Turkmenistan' },
+  { code: '+1', country: 'Turks & Caicos Islands' },
+  { code: '+688', country: 'Tuvalu' },
+  { code: '+256', country: 'Uganda' },
+  { code: '+380', country: 'Ukraine' },
+  { code: '+971', country: 'United Arab Emirates' },
+  { code: '+44', country: 'United Kingdom' },
+  { code: '+1', country: 'United States' },
+  { code: '+598', country: 'Uruguay' },
+  { code: '+1', country: 'US Virgin Islands' },
+  { code: '+998', country: 'Uzbekistan' },
+  { code: '+678', country: 'Vanuatu' },
+  { code: '+39', country: 'Vatican City' },
+  { code: '+58', country: 'Venezuela' },
+  { code: '+84', country: 'Vietnam' },
+  { code: '+681', country: 'Wallis & Futuna' },
+  { code: '+967', country: 'Yemen' },
+  { code: '+260', country: 'Zambia' },
+  { code: '+263', country: 'Zimbabwe' },
 ];
+
+function CountryCodeSelect({ value, onChange, error }) {
+  const [open, setOpen] = useState(false);
+  const [search, setSearch] = useState('');
+  const containerRef = useRef(null);
+  const inputRef = useRef(null);
+
+  const filtered = search.trim()
+    ? COUNTRY_CODES.filter(cc =>
+        cc.code.includes(search.trim()) ||
+        cc.country.toLowerCase().includes(search.trim().toLowerCase())
+      )
+    : COUNTRY_CODES;
+
+  useEffect(() => {
+    function handleClick(e) {
+      if (containerRef.current && !containerRef.current.contains(e.target)) {
+        setOpen(false);
+        setSearch('');
+      }
+    }
+    document.addEventListener('mousedown', handleClick);
+    return () => document.removeEventListener('mousedown', handleClick);
+  }, []);
+
+  useEffect(() => {
+    if (open && inputRef.current) inputRef.current.focus();
+  }, [open]);
+
+  const selected = COUNTRY_CODES.find(cc => cc.code === value) || COUNTRY_CODES[0];
+
+  const triggerBase = {
+    width: '140px',
+    padding: '20px 0',
+    background: 'transparent',
+    border: 'none',
+    borderBottom: error ? '1px solid #EF4444' : '1px solid rgba(255,255,255,0.2)',
+    color: '#fff',
+    fontSize: '1.125rem',
+    fontFamily: 'var(--font-body)',
+    outline: 'none',
+    cursor: 'pointer',
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    gap: '4px',
+    transition: 'border-color 0.3s ease',
+  };
+
+  return (
+    <div ref={containerRef} style={{ position: 'relative', flexShrink: 0 }}>
+      <button
+        type="button"
+        onClick={() => { setOpen(p => !p); setSearch(''); }}
+        style={triggerBase}
+      >
+        <span style={{ overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+          {selected.code} {selected.country}
+        </span>
+        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" style={{
+          flexShrink: 0,
+          opacity: 0.5,
+          transform: open ? 'rotate(180deg)' : 'rotate(0deg)',
+          transition: 'transform 0.2s ease'
+        }}>
+          <polyline points="6 9 12 15 18 9" />
+        </svg>
+      </button>
+
+      {open && (
+        <div className="country-dropdown" style={{
+          position: 'absolute',
+          top: '100%',
+          left: 0,
+          width: '320px',
+          maxHeight: '340px',
+          marginTop: '4px',
+          background: 'rgba(17,24,39,0.98)',
+          backdropFilter: 'blur(16px)',
+          WebkitBackdropFilter: 'blur(16px)',
+          border: '1px solid rgba(255,255,255,0.1)',
+          borderRadius: '12px',
+          overflow: 'hidden',
+          boxShadow: '0 20px 60px rgba(0,0,0,0.5)',
+          zIndex: 100,
+          display: 'flex',
+          flexDirection: 'column',
+        }}>
+          <div style={{ padding: '8px 12px', borderBottom: '1px solid rgba(255,255,255,0.06)' }}>
+            <div style={{
+              display: 'flex',
+              alignItems: 'center',
+              gap: '8px',
+              padding: '8px 0',
+              borderBottom: '1px solid rgba(255,255,255,0.2)',
+            }}>
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,0.4)" strokeWidth="2">
+                <circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/>
+              </svg>
+              <input
+                ref={inputRef}
+                placeholder="Search country or code..."
+                value={search}
+                onChange={e => setSearch(e.target.value)}
+                style={{
+                  background: 'transparent',
+                  border: 'none',
+                  outline: 'none',
+                  color: '#fff',
+                  fontSize: '0.9375rem',
+                  fontFamily: 'var(--font-body)',
+                  width: '100%',
+                }}
+              />
+            </div>
+          </div>
+          <div style={{
+            overflowY: 'auto',
+            flex: 1,
+            maxHeight: '240px',
+          }}>
+            {filtered.map((cc, i) => (
+              <button
+                key={`${cc.code}-${i}`}
+                type="button"
+                onClick={() => { onChange(cc.code); setOpen(false); setSearch(''); }}
+                style={{
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: '12px',
+                  width: '100%',
+                  padding: '10px 16px',
+                  background: cc.code === value
+                    ? 'rgba(34,197,94,0.12)'
+                    : 'transparent',
+                  border: 'none',
+                  color: cc.code === value ? '#22C55E' : 'rgba(255,255,255,0.8)',
+                  fontSize: '0.9375rem',
+                  fontFamily: 'var(--font-body)',
+                  cursor: 'pointer',
+                  textAlign: 'left',
+                  transition: 'background 0.15s ease',
+                }}
+                onMouseEnter={e => { if (cc.code !== value) e.currentTarget.style.background = 'rgba(255,255,255,0.05)'; }}
+                onMouseLeave={e => { if (cc.code !== value) e.currentTarget.style.background = 'transparent'; }}
+              >
+                <span style={{
+                  color: 'rgba(255,255,255,0.4)',
+                  minWidth: '64px',
+                  fontFamily: 'var(--font-mono)',
+                  fontSize: '0.875rem'
+                }}>
+                  {cc.code}
+                </span>
+                <span>{cc.country}</span>
+              </button>
+            ))}
+            {filtered.length === 0 && (
+              <div style={{ padding: '24px 16px', color: 'rgba(255,255,255,0.3)', textAlign: 'center', fontSize: '0.9375rem' }}>
+                No countries found
+              </div>
+            )}
+          </div>
+          <div style={{
+            padding: '8px 16px',
+            borderTop: '1px solid rgba(255,255,255,0.06)',
+            color: 'rgba(255,255,255,0.25)',
+            fontSize: '0.75rem',
+            fontFamily: 'var(--font-mono)',
+          }}>
+            {filtered.length} {filtered.length === 1 ? 'country' : 'countries'}
+          </div>
+        </div>
+      )}
+    </div>
+  );
+}
 
 export default function ContactExperience() {
   const [formData, setFormData] = useState({ name: '', company: '', email: '', phone: '', address: '', type: '', otherType: '', message: '', contactMethod: 'Email' });
@@ -269,34 +662,7 @@ export default function ContactExperience() {
                     <div>
                       <label htmlFor="contact-phone" style={{ position: 'absolute', width: '1px', height: '1px', overflow: 'hidden', clip: 'rect(0,0,0,0)' }}>Phone Number</label>
                       <div style={{ display: 'flex', gap: '8px', alignItems: 'stretch' }}>
-                        <select
-                          value={countryCode}
-                          onChange={e => setCountryCode(e.target.value)}
-                          style={{
-                            ...inputStyle,
-                            width: '130px',
-                            flexShrink: 0,
-                            cursor: 'pointer',
-                            opacity: 0.7,
-                            padding: '20px 0',
-                            borderBottom: errors.phone ? '1px solid #EF4444' : '1px solid rgba(255,255,255,0.2)',
-                            color: '#fff',
-                            background: 'transparent',
-                            fontSize: '1.125rem',
-                            fontFamily: 'var(--font-body)',
-                            outline: 'none',
-                            borderTop: 'none',
-                            borderLeft: 'none',
-                            borderRight: 'none',
-                            borderRadius: 0,
-                            WebkitAppearance: 'none',
-                            appearance: 'none',
-                          }}
-                        >
-                          {COUNTRY_CODES.map(cc => (
-                            <option key={cc.code} value={cc.code} style={{ background: '#111', color: '#fff' }}>{cc.code} {cc.country}</option>
-                          ))}
-                        </select>
+                        <CountryCodeSelect value={countryCode} onChange={setCountryCode} error={errors.phone} />
                         <input 
                           id="contact-phone"
                           placeholder="Phone Number" 
@@ -431,6 +797,8 @@ export default function ContactExperience() {
       </div>
 
       <style>{`
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(-4px); } to { opacity: 1; transform: translateY(0); } }
+        .country-dropdown { animation: fadeIn 0.15s ease; }
         @media (max-width: 992px) {
           #contact { flex-direction: column !important; }
           .contact-info-panel { min-height: auto !important; padding: 60px 24px 40px !important; background-position: top !important; }
