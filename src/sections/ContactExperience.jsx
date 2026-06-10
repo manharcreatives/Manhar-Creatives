@@ -6,16 +6,63 @@ import { supabase } from '../lib/supabase';
 
 const PROJECT_TYPES = ['Website', 'Branding', 'Restaurant Solutions', 'Print', 'Digital Presence', 'Other'];
 
+const COUNTRY_CODES = [
+  { code: '+91', country: 'India' },
+  { code: '+1', country: 'US/Canada' },
+  { code: '+44', country: 'UK' },
+  { code: '+61', country: 'Australia' },
+  { code: '+971', country: 'UAE' },
+  { code: '+65', country: 'Singapore' },
+  { code: '+966', country: 'Saudi Arabia' },
+  { code: '+974', country: 'Qatar' },
+  { code: '+968', country: 'Oman' },
+  { code: '+973', country: 'Bahrain' },
+  { code: '+92', country: 'Pakistan' },
+  { code: '+880', country: 'Bangladesh' },
+  { code: '+977', country: 'Nepal' },
+  { code: '+94', country: 'Sri Lanka' },
+  { code: '+60', country: 'Malaysia' },
+  { code: '+49', country: 'Germany' },
+  { code: '+33', country: 'France' },
+  { code: '+81', country: 'Japan' },
+];
+
 export default function ContactExperience() {
   const [formData, setFormData] = useState({ name: '', company: '', email: '', phone: '', address: '', type: '', otherType: '', message: '', contactMethod: 'Email' });
+  const [countryCode, setCountryCode] = useState('+91');
+  const [errors, setErrors] = useState({});
   const [submitted, setSubmitted] = useState(false);
   const [submitError, setSubmitError] = useState(false);
   const INITIAL_FORM = { name: '', company: '', email: '', phone: '', address: '', type: '', otherType: '', message: '', contactMethod: 'Email' };
 
+  function validate() {
+    const errs = {};
+    if (!formData.name.trim()) errs.name = 'Name is required';
+    if (!formData.email.trim()) {
+      errs.email = 'Email is required';
+    } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formData.email)) {
+      errs.email = 'Please enter a valid email address';
+    }
+    if (!formData.phone.trim()) {
+      errs.phone = 'Phone number is required';
+    } else {
+      const digits = formData.phone.replace(/\D/g, '');
+      if (digits.length < 7 || digits.length > 15) {
+        errs.phone = 'Please enter a valid phone number';
+      }
+    }
+    return errs;
+  }
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     setSubmitError(false);
-    const payload = { ...formData };
+    const errs = validate();
+    setErrors(errs);
+    if (Object.keys(errs).length > 0) return;
+
+    const fullPhone = `${countryCode} ${formData.phone}`;
+    const payload = { ...formData, phone: fullPhone };
     if (payload.type !== 'Other') delete payload.otherType;
     try {
       const fd = new FormData();
@@ -46,7 +93,7 @@ export default function ContactExperience() {
         source: 'Website',
         name: formData.name,
         business: formData.company || '',
-        phone: formData.phone,
+        phone: fullPhone,
         email: formData.email || '',
         location: formData.address || '',
         services: formData.type === 'Other' ? formData.otherType : formData.type,
@@ -56,10 +103,13 @@ export default function ContactExperience() {
     } catch (err) {
       console.error('Supabase insert failed:', err);
     }
+    setErrors({});
     setSubmitted(true);
     setTimeout(() => {
       setSubmitted(false);
       setFormData(INITIAL_FORM);
+      setCountryCode('+91');
+      setErrors({});
     }, 4000);
   };
 
@@ -74,6 +124,16 @@ export default function ContactExperience() {
     fontFamily: 'var(--font-body)',
     outline: 'none', 
     transition: 'border-color 0.3s ease',
+  };
+
+  const errorStyle = {
+    color: '#EF4444',
+    fontSize: '0.8125rem',
+    marginTop: '4px',
+    fontFamily: 'var(--font-body)',
+    display: 'flex',
+    alignItems: 'center',
+    gap: '4px',
   };
 
   return (
@@ -171,11 +231,12 @@ export default function ContactExperience() {
                         id="contact-name" 
                         placeholder="Full Name" 
                         required value={formData.name} 
-                        onChange={e => setFormData({...formData, name: e.target.value})}
-                        style={inputStyle} 
+                        onChange={e => { setFormData({...formData, name: e.target.value}); if (errors.name) setErrors(prev => ({...prev, name: ''})); }}
+                        style={{ ...inputStyle, borderBottomColor: errors.name ? '#EF4444' : 'rgba(255,255,255,0.2)' }} 
                         onFocus={e => e.target.style.borderColor = 'var(--color-primary)'} 
-                        onBlur={e => e.target.style.borderColor = 'rgba(255,255,255,0.2)'} 
+                        onBlur={e => e.target.style.borderColor = errors.name ? '#EF4444' : 'rgba(255,255,255,0.2)'} 
                       />
+                      {errors.name && <div style={errorStyle}><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#EF4444" strokeWidth="2"><circle cx="12" cy="12" r="10"/><line x1="15" y1="9" x2="9" y2="15"/><line x1="9" y1="9" x2="15" y2="15"/></svg>{errors.name}</div>}
                     </div>
 
                     <div>
@@ -197,24 +258,56 @@ export default function ContactExperience() {
                         id="contact-email"
                         placeholder="Email Address" 
                         type="email" required value={formData.email} 
-                        onChange={e => setFormData({...formData, email: e.target.value})}
-                        style={inputStyle} 
+                        onChange={e => { setFormData({...formData, email: e.target.value}); if (errors.email) setErrors(prev => ({...prev, email: ''})); }}
+                        style={{ ...inputStyle, borderBottomColor: errors.email ? '#EF4444' : 'rgba(255,255,255,0.2)' }} 
                         onFocus={e => e.target.style.borderColor = 'var(--color-primary)'} 
-                        onBlur={e => e.target.style.borderColor = 'rgba(255,255,255,0.2)'} 
+                        onBlur={e => e.target.style.borderColor = errors.email ? '#EF4444' : 'rgba(255,255,255,0.2)'} 
                       />
+                      {errors.email && <div style={errorStyle}><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#EF4444" strokeWidth="2"><circle cx="12" cy="12" r="10"/><line x1="15" y1="9" x2="9" y2="15"/><line x1="9" y1="9" x2="15" y2="15"/></svg>{errors.email}</div>}
                     </div>
 
                     <div>
                       <label htmlFor="contact-phone" style={{ position: 'absolute', width: '1px', height: '1px', overflow: 'hidden', clip: 'rect(0,0,0,0)' }}>Phone Number</label>
-                      <input 
-                        id="contact-phone"
-                        placeholder="Phone Number" 
-                        type="tel" required value={formData.phone} 
-                        onChange={e => setFormData({...formData, phone: e.target.value})}
-                        style={inputStyle} 
-                        onFocus={e => e.target.style.borderColor = 'var(--color-primary)'} 
-                        onBlur={e => e.target.style.borderColor = 'rgba(255,255,255,0.2)'} 
-                      />
+                      <div style={{ display: 'flex', gap: '8px', alignItems: 'stretch' }}>
+                        <select
+                          value={countryCode}
+                          onChange={e => setCountryCode(e.target.value)}
+                          style={{
+                            ...inputStyle,
+                            width: '130px',
+                            flexShrink: 0,
+                            cursor: 'pointer',
+                            opacity: 0.7,
+                            padding: '20px 0',
+                            borderBottom: errors.phone ? '1px solid #EF4444' : '1px solid rgba(255,255,255,0.2)',
+                            color: '#fff',
+                            background: 'transparent',
+                            fontSize: '1.125rem',
+                            fontFamily: 'var(--font-body)',
+                            outline: 'none',
+                            borderTop: 'none',
+                            borderLeft: 'none',
+                            borderRight: 'none',
+                            borderRadius: 0,
+                            WebkitAppearance: 'none',
+                            appearance: 'none',
+                          }}
+                        >
+                          {COUNTRY_CODES.map(cc => (
+                            <option key={cc.code} value={cc.code} style={{ background: '#111', color: '#fff' }}>{cc.code} {cc.country}</option>
+                          ))}
+                        </select>
+                        <input 
+                          id="contact-phone"
+                          placeholder="Phone Number" 
+                          type="tel" required value={formData.phone} 
+                          onChange={e => { setFormData({...formData, phone: e.target.value}); if (errors.phone) setErrors(prev => ({...prev, phone: ''})); }}
+                          style={{ ...inputStyle, borderBottomColor: errors.phone ? '#EF4444' : 'rgba(255,255,255,0.2)' }} 
+                          onFocus={e => e.target.style.borderColor = 'var(--color-primary)'} 
+                          onBlur={e => e.target.style.borderColor = errors.phone ? '#EF4444' : 'rgba(255,255,255,0.2)'} 
+                        />
+                      </div>
+                      {errors.phone && <div style={errorStyle}><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#EF4444" strokeWidth="2"><circle cx="12" cy="12" r="10"/><line x1="15" y1="9" x2="9" y2="15"/><line x1="9" y1="9" x2="15" y2="15"/></svg>{errors.phone}</div>}
                     </div>
 
                     <div>
