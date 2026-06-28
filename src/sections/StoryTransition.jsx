@@ -29,7 +29,7 @@ export default function StoryTransition() {
       <motion.div style={{
         position: 'absolute',
         inset: -100,
-        backgroundImage: 'url(https://res.cloudinary.com/dm2hjn5wp/image/upload/q_auto/f_auto/v1780124463/ChatGPT_Image_May_30_2026_12_30_08_PM_lfh6lx.png)',
+        backgroundImage: 'url(https://files.catbox.moe/jgyxin.png)',
         backgroundSize: 'cover',
         backgroundPosition: 'center',
         opacity: 0.55,
@@ -56,7 +56,7 @@ export default function StoryTransition() {
           opacity: 0.95
         }}
       >
-        <img src="https://res.cloudinary.com/dm2hjn5wp/image/upload/q_auto/f_auto/v1780124455/ChatGPT_Image_May_30_2026_12_29_39_PM_gqi9qd.png"           alt="Manhar Creatives workspace — branding and web design studio serving Ahmedabad, Mehsana and Visnagar, Gujarat"
+        <img src="https://files.catbox.moe/gv370h.png"           alt="Manhar Creatives workspace — branding and web design studio serving Ahmedabad, Mehsana and Visnagar, Gujarat"
              loading="lazy" decoding="async"
              style={{ width: '300px', height: '400px', objectFit: 'cover', mixBlendMode: 'screen' }} />
       </motion.div>
@@ -69,7 +69,7 @@ export default function StoryTransition() {
           opacity: 0.9
         }}
       >
-        <img src="https://res.cloudinary.com/dm2hjn5wp/image/upload/q_auto/f_auto/v1780124481/ChatGPT_Image_May_30_2026_12_31_09_PM_xjzpwd.png" alt="Design desk at Manhar Creatives — digital solutions for businesses across Gujarat"
+        <img src="https://files.catbox.moe/5mcxe3.png" alt="Design desk at Manhar Creatives — digital solutions for businesses across Gujarat"
              loading="lazy" decoding="async"
              style={{ width: '400px', height: '250px', objectFit: 'cover', mixBlendMode: 'screen' }} />
       </motion.div>

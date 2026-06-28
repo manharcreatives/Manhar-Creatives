@@ -135,14 +135,14 @@ export const PROJECTS = [
     title: 'Restaurant QR Menu System',
     category: 'CONCEPT DIGITAL SYSTEM',
     description: 'A QR menu and ordering system concept built to improve customer convenience and streamline restaurant operations.',
-    image: 'https://res.cloudinary.com/dm2hjn5wp/image/upload/q_auto/f_auto/v1780383487/Project_3_MC_Web_v5dmtp.png',
+    image: 'https://files.catbox.moe/eu1qse.png',
     tags: ['QR Menu', 'Restaurant', 'Digital System'],
   },
   {
     title: 'Manhar Creatives Brand System',
     category: 'INTERNAL BRAND PROJECT',
     description: 'A strategic brand identity system developed to create consistency, recognition, and long-term brand value across every touchpoint.',
-    image: 'https://res.cloudinary.com/dm2hjn5wp/image/upload/q_auto/f_auto/v1780383487/Project_4_MC_Web_wwrcnm.png',
+    image: 'https://files.catbox.moe/00wa8j.png',
     tags: ['Brand Identity', 'Guidelines', 'Print Design'],
   },
 ];

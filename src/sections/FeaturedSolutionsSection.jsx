@@ -37,7 +37,7 @@ export default function FeaturedSolutionsSection() {
       {/* Background Image for Header */}
       <div style={{
         position: 'absolute', top: 0, left: 0, right: 0, height: '550px', zIndex: 0,
-        backgroundImage: 'url(https://res.cloudinary.com/dm2hjn5wp/image/upload/q_auto/f_auto/v1780202156/ChatGPT_Image_May_31_2026_10_05_38_AM_yc8kdw.png)',
+        backgroundImage: 'url(https://files.catbox.moe/zm4roe.png)',
         backgroundSize: 'cover', backgroundPosition: 'center',
         opacity: 0.1,
       }} />

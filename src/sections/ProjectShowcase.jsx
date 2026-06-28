@@ -33,7 +33,7 @@ function FullscreenProject({ project, index }) {
               objectFit: 'cover', zIndex: 0,
             }}
           >
-            <source src="https://res.cloudinary.com/dm2hjn5wp/video/upload/v1776169641/lv_0_20260414175509_lbetrl.mp4" type="video/mp4" />
+            <source src="https://files.catbox.moe/8vvtmr.mp4" type="video/mp4" />
           </video>
           <div style={{
             position: 'absolute', inset: 0, zIndex: 1,

@@ -142,7 +142,7 @@ export default function FAQSection() {
               <div style={{ position: 'sticky', top: '120px' }}>
                 <div style={{ position: 'relative', paddingBottom: '200%', overflow: 'hidden', borderRadius: '4px' }}>
                   <img
-                    src="https://res.cloudinary.com/dm2hjn5wp/image/upload/q_auto/f_auto/v1780200644/ChatGPT_Image_May_31_2026_09_39_37_AM_pwr3ao.png"
+                    src="https://files.catbox.moe/avdk9p.png"
                     alt="Abstract architectural pattern — representing structured business solutions by Manhar Creatives"
                     loading="lazy" decoding="async"
                     style={{ position: 'absolute', inset: 0, width: '100%', height: '100%', objectFit: 'cover', filter: 'contrast(1.1)' }}

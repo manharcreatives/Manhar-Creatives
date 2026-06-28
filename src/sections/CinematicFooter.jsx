@@ -307,7 +307,7 @@ export default function CinematicFooter() {
           {/* Brand */}
           <ViewAnimator initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: false }} transition={{ duration: 0.6 }}>
             <img
-              src="https://res.cloudinary.com/dm2hjn5wp/image/upload/q_auto/f_auto/v1779002789/Manhar_Creatives_Logo_lgwias.png"
+              src="https://files.catbox.moe/yln3ms.png"
               alt="Manhar Creatives — Website Development, Branding & Digital Solutions in Ahmedabad, Mehsana, Visnagar, Gujarat"
               loading="lazy" decoding="async"
               style={{ height: 48, width: 'auto', marginBottom: '20px' }}

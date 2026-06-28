@@ -11,7 +11,7 @@ const SERVICES_DATA = [
     tagline: 'Professional websites built for credibility.',
     description: 'Custom websites designed to showcase your business, strengthen trust, and create a professional digital presence. Every website is built with clarity, performance, and user experience in mind.',
     features: ['Business Websites', 'Corporate Websites', 'Landing Pages', 'Portfolio Websites', 'Startup Websites'],
-    image: 'https://res.cloudinary.com/dm2hjn5wp/image/upload/q_auto/f_auto/v1780216466/1_Web_Services_WEBSITE_BG_tongas.png',
+    image: 'https://files.catbox.moe/hff6yl.png',
     layout: 'left'
   },
   {
@@ -21,7 +21,7 @@ const SERVICES_DATA = [
     tagline: 'Digital systems for modern restaurants.',
     description: 'Restaurant-focused digital solutions including QR menu systems, restaurant websites, digital menus, and customer-facing experiences designed to improve convenience, efficiency, and brand perception.',
     features: ['Restaurant Websites', 'QR Menu Systems', 'Digital Menus', 'Customer Experience', 'Restaurant Branding'],
-    image: 'https://res.cloudinary.com/dm2hjn5wp/image/upload/q_auto/f_auto/v1780216467/2_Restaurant_WEBSITE_BG_wuhjae.png',
+    image: 'https://files.catbox.moe/59ets7.png',
     layout: 'right'
   },
   {
@@ -31,7 +31,7 @@ const SERVICES_DATA = [
     tagline: 'Professional identities that build trust.',
     description: 'Strategic branding solutions that help businesses establish consistency, improve recognition, and create a strong professional image across digital and physical touchpoints.',
     features: ['Logo Design', 'Brand Identity', 'Brand Guidelines', 'Visual Systems', 'Business Branding'],
-    image: 'https://res.cloudinary.com/dm2hjn5wp/image/upload/q_auto/f_auto/v1780216467/3_Branding_WEBSITE_BG_zgphph.png',
+    image: 'https://files.catbox.moe/pk0kum.png',
     layout: 'left'
   },
   {
@@ -41,7 +41,7 @@ const SERVICES_DATA = [
     tagline: 'Consistent communication across platforms.',
     description: 'Professional social media creatives designed to strengthen brand presence, maintain consistency, and help businesses communicate effectively with their audience.',
     features: ['Social Media Posts', 'Campaign Creatives', 'Content Visuals', 'Brand Communication', 'Promotional Designs'],
-    image: 'https://res.cloudinary.com/dm2hjn5wp/image/upload/q_auto/f_auto/v1780216466/4_Social_media_WEBSITE_BG_ajnmft.png',
+    image: 'https://files.catbox.moe/pzkgfb.png',
     layout: 'right'
   },
   {
@@ -51,7 +51,7 @@ const SERVICES_DATA = [
     tagline: 'Professional branding beyond the screen.',
     description: 'High-quality print and offline branding materials designed to reinforce your brand identity and create a consistent experience across every customer touchpoint.',
     features: ['Business Cards', 'Brochures', 'Flyers', 'Signage', 'Marketing Materials'],
-    image: 'https://res.cloudinary.com/dm2hjn5wp/image/upload/q_auto/f_auto/v1780216467/5_Printing_WEBSITE_BG_xogvad.png',
+    image: 'https://files.catbox.moe/blhmya.png',
     layout: 'left'
   },
   {
@@ -61,7 +61,7 @@ const SERVICES_DATA = [
     tagline: 'Build a stronger online presence.',
     description: 'Essential digital setup services that help businesses present a professional image online, improve discoverability, and maintain consistency across key digital platforms.',
     features: ['Google Business Profile', 'Business Email Setup', 'WhatsApp Business', 'Online Presence Setup', 'Digital Optimization'],
-    image: 'https://res.cloudinary.com/dm2hjn5wp/image/upload/q_auto/f_auto/v1780216467/6_Digital_setup_WEBSITE_BG_isfm5b.png',
+    image: 'https://files.catbox.moe/b7hm9z.png',
     layout: 'right'
   }
 ];
@@ -290,7 +290,7 @@ export default function ServicesUniverse() {
       {/* Background Image for Header */}
       <div aria-hidden="true" style={{
         position: 'absolute', top: 0, left: 0, right: 0, height: '600px', zIndex: 0,
-        backgroundImage: 'url(https://res.cloudinary.com/dm2hjn5wp/image/upload/q_auto/f_auto/v1780201825/ChatGPT_Image_May_31_2026_10_00_07_AM_mqqytv.png)',
+        backgroundImage: 'url(https://files.catbox.moe/ufpaao.png)',
         backgroundSize: 'cover', backgroundPosition: 'center',
         opacity: 0.12,
       }} />

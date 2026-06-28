@@ -5,12 +5,12 @@ import { PROCESS_STEPS } from '../utils/constants';
 
 const PROCESS_DATA = PROCESS_STEPS.map((step, index) => {
   const images = [
-    'https://res.cloudinary.com/dm2hjn5wp/image/upload/q_auto/f_auto/v1780380780/Phase_1_Our_Method_MC_hwcgtv.png',
-    'https://res.cloudinary.com/dm2hjn5wp/image/upload/q_auto/f_auto/v1780380780/Phase_2_Our_Method_MC_ibkc42.png',
-    'https://res.cloudinary.com/dm2hjn5wp/image/upload/q_auto/f_auto/v1780380779/Phase_3_Our_Method_MC_bcxund.png',
-    'https://res.cloudinary.com/dm2hjn5wp/image/upload/q_auto/f_auto/v1780380779/Phase_4_Our_Method_MC_q9msho.png',
-    'https://res.cloudinary.com/dm2hjn5wp/image/upload/q_auto/f_auto/v1780380780/Phase_5_Our_Method_MC_bsc1q6.png',
-    'https://res.cloudinary.com/dm2hjn5wp/image/upload/q_auto/f_auto/v1780380780/Phase_6_Our_Method_MC_bslqhm.png',
+    'https://files.catbox.moe/qu2iwf.png',
+    'https://files.catbox.moe/0ovdbt.png',
+    'https://files.catbox.moe/jxu6cm.png',
+    'https://files.catbox.moe/2jkgw2.png',
+    'https://files.catbox.moe/5q0fsl.png',
+    'https://files.catbox.moe/92nzvz.png',
   ];
   return { ...step, image: images[index] };
 });
@@ -122,7 +122,7 @@ export default function ProcessJourney() {
       {/* Background Image for Header */}
       <div style={{
         position: 'absolute', top: 0, left: 0, right: 0, height: '650px', zIndex: 0,
-        backgroundImage: 'url(https://res.cloudinary.com/dm2hjn5wp/image/upload/q_auto/f_auto/v1780205851/ChatGPT_Image_May_31_2026_11_07_07_AM_w8po2a.png)',
+        backgroundImage: 'url(https://files.catbox.moe/bqdg53.png)',
         backgroundSize: 'cover', backgroundPosition: 'center',
         opacity: 0.2,
       }} />

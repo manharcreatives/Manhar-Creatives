@@ -24,13 +24,13 @@ const BENEFITS = [
     icon: '◎',
     title: 'Online Visibility',
     description: 'A strong digital presence improves discoverability and helps potential customers find your business more easily.',
-    image: 'https://res.cloudinary.com/dm2hjn5wp/image/upload/q_auto/f_auto/v1780393951/online_visibility_u2el6l.jpg',
+    image: 'https://files.catbox.moe/ac3961.jpg',
   },
   {
     icon: '✦',
     title: 'Consistent Communication',
     description: 'Unified communication channels help businesses respond faster, maintain professionalism, and improve customer interactions.',
-    image: 'https://res.cloudinary.com/dm2hjn5wp/image/upload/q_auto/f_auto/v1780393951/professional_communication_f5vkte.jpg',
+    image: 'https://files.catbox.moe/8v5138.jpg',
   },
   {
     icon: '◆',
@@ -46,7 +46,7 @@ export default function BenefitsSection() {
       {/* Background Image for Header */}
       <div aria-hidden="true" style={{
         position: 'absolute', top: 0, left: 0, right: 0, height: '550px', zIndex: 0,
-        backgroundImage: 'url(https://res.cloudinary.com/dm2hjn5wp/image/upload/q_auto/f_auto/v1780202833/ChatGPT_Image_May_31_2026_10_16_57_AM_wfkjfn.png)',
+        backgroundImage: 'url(https://files.catbox.moe/5nnidr.png)',
         backgroundSize: 'cover', backgroundPosition: 'center',
         opacity: 0.2,
       }} />

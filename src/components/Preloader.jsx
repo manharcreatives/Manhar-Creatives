@@ -104,7 +104,7 @@ export default function Preloader({ onComplete }) {
                 }}
               >
                 <source
-                  src="https://res.cloudinary.com/dm2hjn5wp/video/upload/gemini_generated_video_5ade3daf_2_1_vgrkuj.mp4"
+                  src="https://files.catbox.moe/pqslos.mp4"
                   type="video/mp4"
                 />
               </video>

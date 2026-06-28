@@ -16,7 +16,7 @@ export default function IndustriesSection() {
       {/* Background Image for Header */}
       <div style={{
         position: 'absolute', top: 0, left: 0, right: 0, height: '550px', zIndex: 0,
-        backgroundImage: 'url(https://res.cloudinary.com/dm2hjn5wp/image/upload/q_auto/f_auto/v1780202354/ChatGPT_Image_May_31_2026_10_08_56_AM_zloxeo.png)',
+        backgroundImage: 'url(https://files.catbox.moe/5nd0x0.png)',
         backgroundSize: 'cover', backgroundPosition: 'center',
         opacity: 0.1,
       }} />

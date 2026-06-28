@@ -16,6 +16,10 @@ dist-ssr
 docs/
 
 SEO-TODO.md
+next-session.md
+public/assets/
+resp.txt
+test_output.bin
 # Editor directories and files
 .vscode/*
 !.vscode/extensions.json

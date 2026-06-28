@@ -40,7 +40,7 @@ export default function ComparisonSection() {
       {/* Background Image for Header */}
       <div style={{
         position: 'absolute', top: 0, left: 0, right: 0, height: '550px', zIndex: 0,
-        backgroundImage: 'url(https://res.cloudinary.com/dm2hjn5wp/image/upload/q_auto/f_auto/v1780202723/ChatGPT_Image_May_31_2026_10_15_03_AM_vootpy.png)',
+        backgroundImage: 'url(https://files.catbox.moe/pu1291.png)',
         backgroundSize: 'cover', backgroundPosition: 'center',
         opacity: 0.1,
       }} />

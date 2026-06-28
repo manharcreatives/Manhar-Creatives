@@ -2,7 +2,7 @@ import { useRef } from 'react';
 import { motion } from 'framer-motion';
 import MagneticButton from '../components/MagneticButton';
 
-const VIDEO_URL = 'https://res.cloudinary.com/dm2hjn5wp/video/upload/v1780312155/0_2_1_1_g89mm5.mp4';
+const VIDEO_URL = 'https://files.catbox.moe/24krt8.mp4';
 
 export default function HeroExperience() {
   const sectionRef = useRef(null);

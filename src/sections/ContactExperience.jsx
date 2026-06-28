@@ -536,7 +536,7 @@ export default function ContactExperience() {
       <div className="contact-info-panel" style={{ 
         flex: 1, 
         position: 'relative', 
-        backgroundImage: 'url(https://res.cloudinary.com/dm2hjn5wp/image/upload/q_auto/f_auto/v1780201091/ChatGPT_Image_May_31_2026_09_47_54_AM_lmqhuv.png)', 
+        backgroundImage: 'url(https://files.catbox.moe/68bae6.png)', 
         backgroundSize: 'cover', 
         backgroundPosition: 'center',
         borderRight: '1px solid rgba(255,255,255,0.1)'
