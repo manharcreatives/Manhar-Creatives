@@ -29,7 +29,7 @@ export default function StoryTransition() {
       <motion.div style={{
         position: 'absolute',
         inset: -100,
-        backgroundImage: 'url(https://files.catbox.moe/jgyxin.png)',
+        backgroundImage: 'url(/images/backgrounds/story-bg.png)',
         backgroundSize: 'cover',
         backgroundPosition: 'center',
         opacity: 0.55,
@@ -56,7 +56,7 @@ export default function StoryTransition() {
           opacity: 0.95
         }}
       >
-        <img src="https://files.catbox.moe/gv370h.png"           alt="Manhar Creatives workspace — branding and web design studio serving Ahmedabad, Mehsana and Visnagar, Gujarat"
+        <img src="/images/story/floating-top.png"           alt="Manhar Creatives workspace — branding and web design studio serving Ahmedabad, Mehsana and Visnagar, Gujarat"
              loading="lazy" decoding="async"
              style={{ width: '300px', height: '400px', objectFit: 'cover', mixBlendMode: 'screen' }} />
       </motion.div>
@@ -69,7 +69,7 @@ export default function StoryTransition() {
           opacity: 0.9
         }}
       >
-        <img src="https://files.catbox.moe/5mcxe3.png" alt="Design desk at Manhar Creatives — digital solutions for businesses across Gujarat"
+        <img src="/images/story/floating-bottom.png" alt="Design desk at Manhar Creatives — digital solutions for businesses across Gujarat"
              loading="lazy" decoding="async"
              style={{ width: '400px', height: '250px', objectFit: 'cover', mixBlendMode: 'screen' }} />
       </motion.div>

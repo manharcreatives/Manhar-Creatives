@@ -536,7 +536,7 @@ export default function ContactExperience() {
       <div className="contact-info-panel" style={{ 
         flex: 1, 
         position: 'relative', 
-        backgroundImage: 'url(https://files.catbox.moe/68bae6.png)', 
+        backgroundImage: 'url(/images/backgrounds/contact-bg.png)', 
         backgroundSize: 'cover', 
         backgroundPosition: 'center',
         borderRight: '1px solid rgba(255,255,255,0.1)'

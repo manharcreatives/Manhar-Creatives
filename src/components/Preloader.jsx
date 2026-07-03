@@ -104,7 +104,7 @@ export default function Preloader({ onComplete }) {
                 }}
               >
                 <source
-                  src="https://files.catbox.moe/pqslos.mp4"
+                  src="/videos/preloader.mp4"
                   type="video/mp4"
                 />
               </video>

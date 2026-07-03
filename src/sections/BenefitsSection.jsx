@@ -6,37 +6,37 @@ const BENEFITS = [
     icon: '◈',
     title: 'Credibility & Authority',
     description: 'Professional branding and digital systems help businesses establish credibility and create stronger first impressions.',
-    image: 'https://images.unsplash.com/photo-1450101499163-c8848c66ca85?q=80&w=2070',
+    image: '/images/cards/benefit-credibility.png',
   },
   {
     icon: '◇',
     title: 'Brand Recognition',
     description: 'Consistent branding helps businesses communicate clearly, stand out from competitors, and remain memorable.',
-    image: 'https://images.unsplash.com/photo-1557804506-669a67965ba0?q=80&w=2074',
+    image: '/images/cards/benefit-recognition.png',
   },
   {
     icon: '○',
     title: 'Customer Trust',
     description: 'Clear communication, professional presentation, and reliable experiences help customers feel confident choosing your business.',
-    image: 'https://images.unsplash.com/photo-1552581234-26160f608093?q=80&w=2070',
+    image: '/images/cards/benefit-trust.png',
   },
   {
     icon: '◎',
     title: 'Online Visibility',
     description: 'A strong digital presence improves discoverability and helps potential customers find your business more easily.',
-    image: 'https://files.catbox.moe/ac3961.jpg',
+    image: '/images/cards/benefit-visibility.jpg',
   },
   {
     icon: '✦',
     title: 'Consistent Communication',
     description: 'Unified communication channels help businesses respond faster, maintain professionalism, and improve customer interactions.',
-    image: 'https://files.catbox.moe/8v5138.jpg',
+    image: '/images/cards/benefit-communication.jpg',
   },
   {
     icon: '◆',
     title: 'Scalable Foundation',
     description: 'Structured systems and scalable digital infrastructure support long-term growth without requiring constant rebuilding.',
-    image: 'https://images.unsplash.com/photo-1504384308090-c894fdcc538d?q=80&w=2070',
+    image: '/images/cards/benefit-scalable.png',
   },
 ];
 
@@ -46,7 +46,7 @@ export default function BenefitsSection() {
       {/* Background Image for Header */}
       <div aria-hidden="true" style={{
         position: 'absolute', top: 0, left: 0, right: 0, height: '550px', zIndex: 0,
-        backgroundImage: 'url(https://files.catbox.moe/5nnidr.png)',
+        backgroundImage: 'url(/images/backgrounds/benefits-bg.png)',
         backgroundSize: 'cover', backgroundPosition: 'center',
         opacity: 0.2,
       }} />

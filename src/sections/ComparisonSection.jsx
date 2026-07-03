@@ -40,7 +40,7 @@ export default function ComparisonSection() {
       {/* Background Image for Header */}
       <div style={{
         position: 'absolute', top: 0, left: 0, right: 0, height: '550px', zIndex: 0,
-        backgroundImage: 'url(https://files.catbox.moe/pu1291.png)',
+        backgroundImage: 'url(/images/backgrounds/comparison-bg.png)',
         backgroundSize: 'cover', backgroundPosition: 'center',
         opacity: 0.1,
       }} />

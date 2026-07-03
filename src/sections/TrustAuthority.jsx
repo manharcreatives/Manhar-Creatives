@@ -56,7 +56,7 @@ export default function TrustAuthority() {
       {/* Background Image Parallax */}
       <motion.div style={{
         position: 'absolute', inset: -100, zIndex: 0,
-        backgroundImage: 'url(https://images.unsplash.com/photo-1497366216548-37526070297c?q=80&w=2069)',
+        backgroundImage: 'url(/images/backgrounds/trust-bg.png)',
         backgroundSize: 'cover', backgroundPosition: 'center',
         opacity: 0.2,
         y

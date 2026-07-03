@@ -5,12 +5,12 @@ import { PROCESS_STEPS } from '../utils/constants';
 
 const PROCESS_DATA = PROCESS_STEPS.map((step, index) => {
   const images = [
-    'https://files.catbox.moe/qu2iwf.png',
-    'https://files.catbox.moe/0ovdbt.png',
-    'https://files.catbox.moe/jxu6cm.png',
-    'https://files.catbox.moe/2jkgw2.png',
-    'https://files.catbox.moe/5q0fsl.png',
-    'https://files.catbox.moe/92nzvz.png',
+    '/images/process/discovery.png',
+    '/images/process/research.png',
+    '/images/process/planning.png',
+    '/images/process/design-dev.png',
+    '/images/process/review.png',
+    '/images/process/delivery.png',
   ];
   return { ...step, image: images[index] };
 });
@@ -122,7 +122,7 @@ export default function ProcessJourney() {
       {/* Background Image for Header */}
       <div style={{
         position: 'absolute', top: 0, left: 0, right: 0, height: '650px', zIndex: 0,
-        backgroundImage: 'url(https://files.catbox.moe/bqdg53.png)',
+        backgroundImage: 'url(/images/backgrounds/process-bg.png)',
         backgroundSize: 'cover', backgroundPosition: 'center',
         opacity: 0.2,
       }} />

@@ -94,7 +94,7 @@ export default function Navigation() {
           {/* Logo */}
           <a href="/" style={{ display: 'flex', alignItems: 'center', gap: '10px', textDecoration: 'none', zIndex: 2 }}>
             <img
-              src="https://i.ibb.co/zhm9hvd7/Primary-H-White.png"
+              src="/images/logos/nav-logo.png"
               alt="Manhar Creatives"
               loading="lazy" decoding="async"
               style={{
