@@ -60,13 +60,16 @@ function cleanSessions() {
 }
 setInterval(cleanSessions, 60000);
 
-function buildSystemPrompt() {
+function buildSystemPrompt(language = 'english') {
   const servicesText = knowledge.services.map(s =>
     `  - ${s.name}: ${s.description} [Services: ${s.features.join(', ')}]`
   ).join('\n');
   const faqText = knowledge.faq.map(f => `  Q: ${f.q}\n  A: ${f.a}`).join('\n\n');
 
+  const langNames = { english: 'English', hindi: 'Hindi', gujarati: 'Gujarati' };
   return `You are the official AI assistant for Manhar Creatives, a website development & branding agency based in Visnagar, Gujarat, India.
+
+LANGUAGE: The user selected ${langNames[language] || 'English'}. You MUST respond in ${langNames[language] || 'English'} only. Never switch to another language.
 
 YOUR ROLE:
 - Answer questions about Manhar Creatives and their services
@@ -160,7 +163,7 @@ export default async function handler(req, res) {
 
   try {
     const body = await getBody(req);
-    const { message, sessionId = '' } = body;
+    const { message, sessionId = '', language = 'english' } = body;
 
     if (!message || !message.trim()) {
       return res.status(400).json({ error: 'Message is required' });
@@ -170,7 +173,7 @@ export default async function handler(req, res) {
 
     if (!sessions.has(sid)) {
       sessions.set(sid, {
-        messages: [{ role: 'system', content: buildSystemPrompt() }],
+        messages: [{ role: 'system', content: buildSystemPrompt(language) }],
         lastUsed: Date.now(),
         createdAt: Date.now()
       });
@@ -180,7 +183,8 @@ export default async function handler(req, res) {
     session.lastUsed = Date.now();
     session.messages.push({ role: 'user', content: message });
 
-    const reply = await chatWithLLM(session.messages);
+    const raw = await chatWithLLM(session.messages);
+    const reply = (raw || '').replace(/\*\*/g, '');
 
     session.messages.push({ role: 'assistant', content: reply });
     if (session.messages.length > 20) {

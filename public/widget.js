@@ -21,10 +21,9 @@
   // ─── State ───
   let sessionId = localStorage.getItem('mch_session') || '';
   let chatOpen = false;
-  let isListening = false;
   let botVisible = false;
-  let dismissTimer = null;
-  let currentSectionIdx = 0;
+  let currentSectionIdx = -1;
+  let selectedLanguage = null;
   let isDismissing = false;
   const sections = [
     { id: '#hero',     pos: { left: '30px', bottom: '45%' } },
@@ -59,7 +58,7 @@
       gap: 12px;
       pointer-events: auto;
       opacity: 0;
-      transition: opacity 0.5s ${BRAND.easeOutExpo}, transform 0.5s ${BRAND.easeOutExpo};
+      transition: opacity 0.5s cubic-bezier(0.16, 1, 0.3, 1), transform 0.5s cubic-bezier(0.16, 1, 0.3, 1);
       will-change: transform, opacity;
     }
     .mch-bubble-wrap.mch-from-left { transform: translateX(-100%); }
@@ -70,22 +69,22 @@
     }
     .mch-bubble-wrap.mch-hide {
       opacity: 0;
-      transition: opacity 0.35s ${BRAND.easeOutExpo}, transform 0.35s ${BRAND.easeOutExpo};
+      transition: opacity 0.35s cubic-bezier(0.16, 1, 0.3, 1), transform 0.35s cubic-bezier(0.16, 1, 0.3, 1);
     }
 
     .mch-avatar {
       width: 60px;
       height: 60px;
       border-radius: 50%;
-      border: 2px solid ${BRAND.borderGlow};
+      border: 2px solid rgba(34,197,94,0.3);
       box-shadow: 0 0 24px rgba(34,197,94,0.35), 0 0 60px rgba(34,197,94,0.08);
       cursor: pointer;
       flex-shrink: 0;
       overflow: hidden;
-      background: ${BRAND.bgGlass};
+      background: rgba(11,15,14,0.6);
       backdrop-filter: blur(16px);
       -webkit-backdrop-filter: blur(16px);
-      transition: transform 0.3s ${BRAND.easeOutExpo}, box-shadow 0.3s ${BRAND.easeOutExpo};
+      transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.3s cubic-bezier(0.16, 1, 0.3, 1);
       animation: mch-bob 3s ease-in-out infinite;
       -webkit-tap-highlight-color: transparent;
     }
@@ -107,16 +106,15 @@
 
     .mch-bubble {
       position: relative;
-      background: ${BRAND.bgGlass};
+      background: rgba(11,15,14,0.6);
       backdrop-filter: blur(20px);
       -webkit-backdrop-filter: blur(20px);
-      border: 1px solid ${BRAND.borderLight};
+      border: 1px solid rgba(255,255,255,0.1);
       border-radius: 16px;
       padding: 10px 16px 10px 14px;
-      color: ${BRAND.textPrimary};
+      color: #FFFFFF;
       font-size: 13px;
       line-height: 1.4;
-      white-space: nowrap;
       box-shadow: 0 4px 24px rgba(0,0,0,0.3);
       display: flex;
       align-items: center;
@@ -129,18 +127,18 @@
       right: 100%;
       margin-top: -6px;
       border: 6px solid transparent;
-      border-right-color: ${BRAND.borderLight};
+      border-right-color: rgba(255,255,255,0.1);
     }
     .mch-bubble-wrap.mch-right { flex-direction: row-reverse; }
     .mch-bubble-wrap.mch-right .mch-bubble::after {
       right: auto; left: 100%;
       border-right-color: transparent;
-      border-left-color: ${BRAND.borderLight};
+      border-left-color: rgba(255,255,255,0.1);
     }
     .mch-bubble-close {
       background: none;
       border: none;
-      color: ${BRAND.textMuted};
+      color: #6B7280;
       cursor: pointer;
       padding: 2px;
       display: flex;
@@ -150,19 +148,39 @@
       transition: color 0.2s, background 0.2s;
       flex-shrink: 0;
     }
-    .mch-bubble-close:hover { color: ${BRAND.textPrimary}; background: rgba(255,255,255,0.06); }
+    .mch-bubble-close:hover { color: #FFFFFF; background: rgba(255,255,255,0.06); }
     .mch-bubble-close svg { width: 14px; height: 14px; }
 
-    .mch-timer {
-      width: 40px;
-      height: 40px;
-      position: absolute;
-      top: -8px;
-      right: -8px;
+    /* Language Picker */
+    .mch-lang-picker {
+      display: none;
+      flex-direction: column;
+      gap: 6px;
+      white-space: nowrap;
     }
-    .mch-timer svg { transform: rotate(-90deg); }
-    .mch-timer .bg { fill: none; stroke: rgba(255,255,255,0.06); stroke-width: 3; }
-    .mch-timer .fg { fill: none; stroke: ${BRAND.primary}; stroke-width: 3; stroke-linecap: round; transition: stroke-dashoffset 0.1s linear; }
+    .mch-lang-label {
+      font-size: 11px;
+      color: #9CA3AF;
+    }
+    .mch-lang-options {
+      display: flex;
+      gap: 4px;
+    }
+    .mch-lang-btn {
+      background: rgba(31,41,55,0.6);
+      border: 1px solid rgba(255,255,255,0.06);
+      border-radius: 8px;
+      padding: 5px 10px;
+      font-size: 11.5px;
+      font-family: inherit;
+      color: #FFFFFF;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+    .mch-lang-btn:hover {
+      background: rgba(34,197,94,0.15);
+      border-color: rgba(34,197,94,0.3);
+    }
 
     /* ── Chat Window ── */
     .mch-window {
@@ -173,15 +191,15 @@
       height: 600px;
       max-height: min(600px, calc(100vh - 140px));
       max-width: calc(100vw - 40px);
-      background: ${BRAND.bg};
-      border: 1px solid ${BRAND.borderLight};
-      border-radius: ${BRAND.radiusLg};
+      background: #0B0F0E;
+      border: 1px solid rgba(255,255,255,0.1);
+      border-radius: 20px;
       overflow: hidden;
       box-shadow: 0 8px 48px rgba(0,0,0,0.5);
       display: none;
       flex-direction: column;
       z-index: 2147483647;
-      animation: mch-slideUp 0.35s ${BRAND.easeOutExpo};
+      animation: mch-slideUp 0.35s cubic-bezier(0.16, 1, 0.3, 1);
     }
     .mch-window.mch-open { display: flex; }
 
@@ -191,10 +209,10 @@
     }
 
     .mch-hdr {
-      background: ${BRAND.bgGlass};
+      background: rgba(11,15,14,0.6);
       backdrop-filter: blur(20px);
       -webkit-backdrop-filter: blur(20px);
-      border-bottom: 1px solid ${BRAND.borderSubtle};
+      border-bottom: 1px solid rgba(255,255,255,0.06);
       padding: 14px 18px;
       display: flex;
       align-items: center;
@@ -203,24 +221,24 @@
     }
     .mch-hdr-avatar {
       width: 36px; height: 36px; border-radius: 50%; overflow: hidden;
-      border: 1.5px solid ${BRAND.borderGlow}; flex-shrink: 0;
+      border: 1.5px solid rgba(34,197,94,0.3); flex-shrink: 0;
     }
     .mch-hdr-avatar img { width: 100%; height: 100%; object-fit: cover; display: block; }
     .mch-hdr-info { flex: 1; min-width: 0; }
-    .mch-hdr-name { font-size: 14px; font-weight: 600; color: ${BRAND.textPrimary}; }
-    .mch-hdr-status { font-size: 11px; color: ${BRAND.primary}; display: flex; align-items: center; gap: 4px; }
-    .mch-hdr-dot { width: 5px; height: 5px; border-radius: 50%; background: ${BRAND.primary}; display: inline-block; }
+    .mch-hdr-name { font-size: 14px; font-weight: 600; color: #FFFFFF; }
+    .mch-hdr-status { font-size: 11px; color: #22C55E; display: flex; align-items: center; gap: 4px; }
+    .mch-hdr-dot { width: 5px; height: 5px; border-radius: 50%; background: #22C55E; display: inline-block; }
     .mch-hdr-btn {
       background: transparent; border: none; border-radius: 8px; width: 30px; height: 30px;
       display: flex; align-items: center; justify-content: center; cursor: pointer;
-      color: ${BRAND.textMuted}; transition: background 0.2s, color 0.2s;
+      color: #6B7280; transition: background 0.2s, color 0.2s;
     }
-    .mch-hdr-btn:hover { background: rgba(255,255,255,0.06); color: ${BRAND.textPrimary}; }
+    .mch-hdr-btn:hover { background: rgba(255,255,255,0.06); color: #FFFFFF; }
     .mch-hdr-btn svg { width: 16px; height: 16px; }
 
     .mch-body {
       flex: 1; overflow-y: auto; padding: 16px; display: flex; flex-direction: column; gap: 8px;
-      background: ${BRAND.bg}; scroll-behavior: smooth;
+      background: #0B0F0E; scroll-behavior: smooth;
     }
     .mch-body::-webkit-scrollbar { width: 3px; }
     .mch-body::-webkit-scrollbar-track { background: transparent; }
@@ -231,22 +249,22 @@
       line-height: 1.55; word-wrap: break-word; animation: mch-fadeIn 0.25s ease;
     }
     .mch-msg-user {
-      background: ${BRAND.primary}; color: #0B0F0E; align-self: flex-end;
+      background: #22C55E; color: #0B0F0E; align-self: flex-end;
       border-bottom-right-radius: 4px; font-weight: 500;
     }
     .mch-msg-bot {
-      background: ${BRAND.bgSecondary}; color: ${BRAND.textPrimary};
-      align-self: flex-start; border: 1px solid ${BRAND.borderSubtle}; border-bottom-left-radius: 4px;
+      background: #111827; color: #FFFFFF;
+      align-self: flex-start; border: 1px solid rgba(255,255,255,0.06); border-bottom-left-radius: 4px;
     }
     .mch-time { font-size: 10px; opacity: 0.35; margin-top: 4px; text-align: right; }
 
     .mch-typing {
-      align-self: flex-start; background: ${BRAND.bgSecondary}; border: 1px solid ${BRAND.borderSubtle};
+      align-self: flex-start; background: #111827; border: 1px solid rgba(255,255,255,0.06);
       padding: 12px 16px; border-radius: 14px; border-bottom-left-radius: 4px; display: flex; gap: 4px;
       animation: mch-fadeIn 0.2s ease;
     }
     .mch-typing span {
-      width: 6px; height: 6px; border-radius: 50%; background: ${BRAND.textMuted};
+      width: 6px; height: 6px; border-radius: 50%; background: #6B7280;
       animation: mch-bounce 1.4s ease-in-out infinite;
     }
     .mch-typing span:nth-child(2) { animation-delay: 0.2s; }
@@ -258,38 +276,38 @@
     @keyframes mch-fadeIn { from { opacity: 0; } to { opacity: 1; } }
 
     .mch-footer {
-      background: ${BRAND.bgGlass}; backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px);
-      border-top: 1px solid ${BRAND.borderSubtle}; padding: 10px 14px;
+      background: rgba(11,15,14,0.6); backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px);
+      border-top: 1px solid rgba(255,255,255,0.06); padding: 10px 14px;
       display: flex; align-items: flex-end; gap: 8px; flex-shrink: 0;
     }
     .mch-input {
-      flex: 1; background: rgba(31,41,55,0.4); border: 1px solid ${BRAND.borderSubtle};
+      flex: 1; background: rgba(31,41,55,0.4); border: 1px solid rgba(255,255,255,0.06);
       border-radius: 12px; padding: 9px 13px; font-family: inherit; font-size: 13.5px;
-      color: ${BRAND.textPrimary}; outline: none; transition: border-color 0.2s, background 0.2s;
+      color: #FFFFFF; outline: none; transition: border-color 0.2s, background 0.2s;
       resize: none; min-height: 38px; max-height: 120px; line-height: 1.4;
     }
-    .mch-input::placeholder { color: ${BRAND.textMuted}; }
+    .mch-input::placeholder { color: #6B7280; }
     .mch-input:focus { border-color: rgba(34,197,94,0.4); background: rgba(31,41,55,0.6); }
 
     .mch-send {
-      width: 38px; height: 38px; border-radius: 50%; border: none; background: ${BRAND.primary};
+      width: 38px; height: 38px; border-radius: 50%; border: none; background: #22C55E;
       color: #0B0F0E; display: flex; align-items: center; justify-content: center;
-      cursor: pointer; flex-shrink: 0; transition: transform 0.2s ${BRAND.easeOutExpo}, background 0.2s, opacity 0.2s;
+      cursor: pointer; flex-shrink: 0; transition: transform 0.2s cubic-bezier(0.16, 1, 0.3, 1), background 0.2s, opacity 0.2s;
     }
-    .mch-send:hover { transform: scale(1.05); background: ${BRAND.accent}; }
+    .mch-send:hover { transform: scale(1.05); background: #4ADE80; }
     .mch-send:active { transform: scale(0.9); }
     .mch-send:disabled { opacity: 0.3; cursor: default; transform: none; }
     .mch-send svg { width: 18px; height: 18px; }
 
     .mch-quick {
-      display: flex; flex-wrap: wrap; gap: 6px; padding: 4px 16px 12px; background: ${BRAND.bg};
+      display: flex; flex-wrap: wrap; gap: 6px; padding: 4px 16px 12px; background: #0B0F0E;
     }
     .mch-qchip {
-      background: rgba(31,41,55,0.5); border: 1px solid ${BRAND.borderSubtle};
-      border-radius: 20px; padding: 5px 12px; font-size: 12px; color: ${BRAND.textSecondary};
+      background: rgba(31,41,55,0.5); border: 1px solid rgba(255,255,255,0.06);
+      border-radius: 20px; padding: 5px 12px; font-size: 12px; color: #9CA3AF;
       cursor: pointer; transition: all 0.2s; font-family: inherit;
     }
-    .mch-qchip:hover { background: rgba(34,197,94,0.1); border-color: ${BRAND.borderGlow}; color: ${BRAND.accent}; }
+    .mch-qchip:hover { background: rgba(34,197,94,0.1); border-color: rgba(34,197,94,0.3); color: #4ADE80; }
 
     @media (max-width: 480px) {
       .mch-window {
@@ -325,19 +343,36 @@
   const bubble = document.createElement('div');
   bubble.className = 'mch-bubble';
 
-  const timerSvg = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
-  timerSvg.setAttribute('viewBox', '0 0 40 40');
-  timerSvg.classList.add('mch-timer');
-  const bgCircle = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
-  bgCircle.setAttribute('cx', '20'); bgCircle.setAttribute('cy', '20');
-  bgCircle.setAttribute('r', '17'); bgCircle.classList.add('bg');
-  const fgCircle = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
-  fgCircle.setAttribute('cx', '20'); fgCircle.setAttribute('cy', '20');
-  fgCircle.setAttribute('r', '17'); fgCircle.classList.add('fg');
-  fgCircle.setAttribute('stroke-dasharray', '106.8');
-  fgCircle.setAttribute('stroke-dashoffset', '0');
-  timerSvg.appendChild(bgCircle);
-  timerSvg.appendChild(fgCircle);
+  // Language picker UI (hidden by default)
+  const langPicker = document.createElement('div');
+  langPicker.className = 'mch-lang-picker';
+
+  const langLabel = document.createElement('div');
+  langLabel.className = 'mch-lang-label';
+  langLabel.textContent = 'Choose your language:';
+
+  const langOptions = document.createElement('div');
+  langOptions.className = 'mch-lang-options';
+
+  const languages = [
+    { code: 'hindi', label: '🇮🇳 हिंदी' },
+    { code: 'english', label: '🇬🇧 English' },
+    { code: 'gujarati', label: '🇮🇳 ગુજરાતી' },
+  ];
+  languages.forEach(lang => {
+    const btn = document.createElement('button');
+    btn.className = 'mch-lang-btn';
+    btn.textContent = lang.label;
+    btn.dataset.lang = lang.code;
+    btn.addEventListener('click', (e) => {
+      e.stopPropagation();
+      selectLanguage(lang.code);
+    });
+    langOptions.appendChild(btn);
+  });
+
+  langPicker.appendChild(langLabel);
+  langPicker.appendChild(langOptions);
 
   const msgSpan = document.createElement('span');
   msgSpan.textContent = "Need help? 👋";
@@ -347,7 +382,7 @@
   closeBtn.setAttribute('aria-label', 'Dismiss');
   closeBtn.innerHTML = CLOSE_SVG;
 
-  bubble.appendChild(timerSvg);
+  bubble.appendChild(langPicker);
   bubble.appendChild(msgSpan);
   bubble.appendChild(closeBtn);
 
@@ -392,27 +427,6 @@
   const chatSend = chatEl.querySelector('.mch-send');
   const chatChips = chatEl.querySelectorAll('.mch-qchip');
 
-  // ─── Timer animation ───
-  function startTimer(seconds, onDone) {
-    const circle = bubble.querySelector('.fg');
-    const circumference = 106.8;
-    let remaining = seconds;
-    circle.style.strokeDashoffset = '0';
-
-    const interval = setInterval(() => {
-      remaining -= 0.1;
-      if (remaining <= 0) {
-        clearInterval(interval);
-        onDone();
-        return;
-      }
-      const offset = circumference * (1 - remaining / seconds);
-      circle.style.strokeDashoffset = offset;
-    }, 100);
-
-    return () => clearInterval(interval);
-  }
-
   // ─── Show/hide bot ───
   function showBot(pos) {
     if (botVisible || isDismissing) return;
@@ -433,21 +447,15 @@
     if (isRight) bubbleWrap.classList.add('mch-right');
     void bubbleWrap.offsetHeight;
     bubbleWrap.classList.add('mch-show');
-
-    dismissTimer = startTimer(5, () => {
-      hideBot(true);
-    });
   }
 
-  function hideBot(fromTimeout) {
-    if (!botVisible) return;
+  function hideBot(callback) {
+    if (!botVisible && !isDismissing) {
+      if (callback) callback();
+      return;
+    }
     botVisible = false;
     isDismissing = true;
-
-    if (dismissTimer) {
-      dismissTimer();
-      dismissTimer = null;
-    }
 
     const isRight = bubbleWrap.classList.contains('mch-right');
     bubbleWrap.classList.remove('mch-show');
@@ -457,56 +465,73 @@
     setTimeout(() => {
       bubbleWrap.style.transform = '';
       isDismissing = false;
-      if (chatOpen) return;
-      if (fromTimeout) {
-        activateNextSection();
-      }
+      if (callback) callback();
     }, 400);
   }
 
-  // ─── Section tracking (scroll-based, Lenis-compatible) ───
+  // ─── Language picker ───
+  function showLanguagePicker() {
+    msgSpan.style.display = 'none';
+    langPicker.style.display = 'flex';
+  }
+
+  function hideLanguagePicker() {
+    msgSpan.style.display = '';
+    langPicker.style.display = 'none';
+  }
+
+  function selectLanguage(lang) {
+    selectedLanguage = lang;
+    hideLanguagePicker();
+    openChat();
+  }
+
+  // ─── Section tracking (continuous, Lenis-compatible) ───
   let sectionRaf = null;
-  let sectionWatchActive = false;
 
-  function activateNextSection() {
-    if (sectionWatchActive) return;
-    sectionWatchActive = true;
+  function startSectionWatcher() {
+    function checkSections() {
+      if (chatOpen) {
+        sectionRaf = requestAnimationFrame(checkSections);
+        return;
+      }
 
-    function check() {
-      for (let i = currentSectionIdx + 1; i < sections.length; i++) {
+      let foundSection = -1;
+      for (let i = 0; i < sections.length; i++) {
         const el = document.querySelector(sections[i].id);
         if (!el) continue;
         const rect = el.getBoundingClientRect();
-        if (rect.top < window.innerHeight * 0.65) {
-          currentSectionIdx = i;
-          sectionWatchActive = false;
-          setTimeout(() => showBot(sections[i].pos), 500);
-          return;
+        const threshold = i === 0 ? 0.75 : 0.6;
+        if (rect.top < window.innerHeight * threshold && rect.bottom > 80) {
+          foundSection = i;
+          break;
         }
       }
-      sectionRaf = requestAnimationFrame(check);
+
+      if (foundSection >= 0 && foundSection !== currentSectionIdx && !isDismissing) {
+        const newPos = sections[foundSection].pos;
+        currentSectionIdx = foundSection;
+        if (botVisible) {
+          hideBot(() => showBot(newPos));
+        } else {
+          showBot(newPos);
+        }
+      } else if (foundSection < 0 && botVisible && !isDismissing) {
+        hideBot();
+      }
+
+      sectionRaf = requestAnimationFrame(checkSections);
     }
-    sectionRaf = requestAnimationFrame(check);
+    sectionRaf = requestAnimationFrame(checkSections);
   }
 
   // ─── Initial activation ───
   function tryActivate() {
     const hero = document.querySelector('#hero');
     if (!hero) { setTimeout(tryActivate, 500); return; }
-
     const preloader = document.querySelector('.preloader');
     if (preloader) { setTimeout(tryActivate, 500); return; }
-
-    function checkHero() {
-      const h = document.querySelector('#hero');
-      if (!h) { setTimeout(checkHero, 500); return; }
-      if (h.getBoundingClientRect().bottom > 0) {
-        setTimeout(checkHero, 150);
-        return;
-      }
-      setTimeout(() => showBot(sections[0].pos), 600);
-    }
-    setTimeout(checkHero, 300);
+    startSectionWatcher();
   }
 
   // ─── Chat functions ───
@@ -539,17 +564,21 @@
     const reply = document.createElement('div');
     reply.className = 'mch-msg mch-msg-bot';
 
+    const body = { message: text, sessionId: sessionId || undefined };
+    if (selectedLanguage) body.language = selectedLanguage;
+
     fetch(baseUrl + '/api/chat', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ message: text, sessionId: sessionId || undefined })
+      body: JSON.stringify(body)
     })
     .then(r => r.json())
     .then(data => {
       sessionId = data.sessionId;
       localStorage.setItem('mch_session', sessionId);
       typing.remove();
-      reply.textContent = data.reply;
+      const cleanReply = (data.reply || '').replace(/\*\*/g, '');
+      reply.textContent = cleanReply;
       const time = document.createElement('div');
       time.className = 'mch-time';
       time.textContent = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
@@ -568,25 +597,38 @@
   function openChat() {
     if (chatOpen) return;
     chatOpen = true;
-    hideBot(false);
+    hideBot();
     chatEl.classList.add('mch-open');
     chatInput.focus();
-    if (chatBody.children.length === 0) sendMsg('hi');
+    if (chatBody.children.length === 0) {
+      const greetings = {
+        hindi: 'Namaste! Main Manhar AI hoon. Aapki kaise madad kar sakta hoon?',
+        gujarati: 'Namaste! Hu Manhar AI chhu. Tamari kem madad kari shaku?',
+        english: 'Hello! I\'m Manhar AI. How can I help you?',
+      };
+      const greeting = greetings[selectedLanguage] || greetings.english;
+      const msg = document.createElement('div');
+      msg.className = 'mch-msg mch-msg-bot';
+      msg.textContent = greeting;
+      const time = document.createElement('div');
+      time.className = 'mch-time';
+      time.textContent = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+      msg.appendChild(time);
+      chatBody.appendChild(msg);
+    }
   }
 
   function closeChat() {
     chatOpen = false;
+    selectedLanguage = null;
     chatEl.classList.remove('mch-open');
-    currentSectionIdx = 0;
-    sectionWatchActive = false;
-    if (sectionRaf) { cancelAnimationFrame(sectionRaf); sectionRaf = null; }
-    activateNextSection();
+    currentSectionIdx = -1;
   }
 
   // ─── Events ───
-  avatar.addEventListener('click', openChat);
-  avatar.addEventListener('keydown', e => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); openChat(); } });
-  closeBtn.addEventListener('click', (e) => { e.stopPropagation(); hideBot(true); });
+  avatar.addEventListener('click', showLanguagePicker);
+  avatar.addEventListener('keydown', e => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); showLanguagePicker(); } });
+  closeBtn.addEventListener('click', (e) => { e.stopPropagation(); hideBot(); });
 
   chatSend.addEventListener('click', () => sendMsg(chatInput.value));
   chatInput.addEventListener('input', () => {
@@ -607,6 +649,7 @@
   chatEl.querySelector('[data-action="close"]').addEventListener('click', closeChat);
   chatEl.querySelector('[data-action="reset"]').addEventListener('click', () => {
     sessionId = '';
+    selectedLanguage = null;
     localStorage.removeItem('mch_session');
     chatBody.innerHTML = '';
     fetch(baseUrl + '/api/chat', {
