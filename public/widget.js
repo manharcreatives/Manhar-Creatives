@@ -395,9 +395,9 @@
   `;
   wrap.appendChild(botBtn);
 
-  const window = document.createElement('div');
-  window.className = 'mch-window';
-  window.innerHTML = `
+  const chatWindow = document.createElement('div');
+  chatWindow.className = 'mch-window';
+  chatWindow.innerHTML = `
     <div class="mch-header">
       <div class="mch-avatar">${BOT_SVG}</div>
       <div class="mch-hdr-info">
@@ -423,15 +423,15 @@
       <button class="mch-send" disabled aria-label="Send">${SEND_SVG}</button>
     </div>
   `;
-  wrap.appendChild(window);
+  wrap.appendChild(chatWindow);
   shadow.appendChild(wrap);
 
   // ─── DOM refs ───
-  const body = window.querySelector('.mch-body');
-  const input = window.querySelector('.mch-input');
-  const sendBtn = window.querySelector('.mch-send');
-  const micBtn = window.querySelector('.mch-mic');
-  const chips = window.querySelectorAll('.mch-qchip');
+  const body = chatWindow.querySelector('.mch-body');
+  const input = chatWindow.querySelector('.mch-input');
+  const sendBtn = chatWindow.querySelector('.mch-send');
+  const micBtn = chatWindow.querySelector('.mch-mic');
+  const chips = chatWindow.querySelectorAll('.mch-qchip');
   const ring = botBtn.querySelector('.mch-ring');
 
   // ─── Auto-resize input ───
@@ -512,9 +512,9 @@
   });
 
   // ─── Header actions ───
-  window.querySelector('[data-action="close"]').addEventListener('click', toggle);
-  window.querySelector('[data-action="minimize"]').addEventListener('click', toggle);
-  window.querySelector('[data-action="reset"]').addEventListener('click', () => {
+  chatWindow.querySelector('[data-action="close"]').addEventListener('click', toggle);
+  chatWindow.querySelector('[data-action="minimize"]').addEventListener('click', toggle);
+  chatWindow.querySelector('[data-action="reset"]').addEventListener('click', () => {
     sessionId = '';
     localStorage.removeItem('mch_session');
     body.innerHTML = '';
@@ -571,7 +571,7 @@
   function toggle() {
     isOpen = !isOpen;
     botBtn.classList.toggle('mch-open', isOpen);
-    window.classList.toggle('mch-open', isOpen);
+    chatWindow.classList.toggle('mch-open', isOpen);
     ring.classList.toggle('mch-stop', isOpen);
     if (isOpen) {
       input.focus();
@@ -588,6 +588,9 @@
   document.addEventListener('keydown', e => {
     if (e.key === 'Escape' && isOpen) toggle();
   });
+
+  // ─── Attach to DOM ───
+  document.body.appendChild(root);
 
   // ─── Welcome on session resume ───
   if (sessionId) {
