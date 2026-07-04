@@ -183,8 +183,7 @@ export default async function handler(req, res) {
     session.lastUsed = Date.now();
     session.messages.push({ role: 'user', content: message });
 
-    const raw = await chatWithLLM(session.messages);
-    const reply = (raw || '').replace(/\*\*/g, '');
+    const reply = await chatWithLLM(session.messages);
 
     session.messages.push({ role: 'assistant', content: reply });
     if (session.messages.length > 20) {

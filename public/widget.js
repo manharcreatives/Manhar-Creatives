@@ -26,7 +26,6 @@
   let selectedLanguage = null;
   let isDismissing = false;
   const sections = [
-    { id: '#hero',     pos: { left: '30px', bottom: '45%' } },
     { id: '#services', pos: { right: '30px', bottom: '40%' } },
     { id: '#process',  pos: { left: '30px', top: '40%' } },
     { id: '#projects', pos: { right: '30px', bottom: '35%' } },
@@ -55,7 +54,7 @@
       position: relative;
       display: flex;
       align-items: center;
-      gap: 12px;
+      gap: 16px;
       pointer-events: auto;
       opacity: 0;
       transition: opacity 0.5s cubic-bezier(0.16, 1, 0.3, 1), transform 0.5s cubic-bezier(0.16, 1, 0.3, 1);
@@ -73,11 +72,11 @@
     }
 
     .mch-avatar {
-      width: 60px;
-      height: 60px;
+      width: 80px;
+      height: 80px;
       border-radius: 50%;
-      border: 2px solid rgba(34,197,94,0.3);
-      box-shadow: 0 0 24px rgba(34,197,94,0.35), 0 0 60px rgba(34,197,94,0.08);
+      border: 2.5px solid rgba(34,197,94,0.3);
+      box-shadow: 0 0 32px rgba(34,197,94,0.4), 0 0 80px rgba(34,197,94,0.12);
       cursor: pointer;
       flex-shrink: 0;
       overflow: hidden;
@@ -220,8 +219,8 @@
       flex-shrink: 0;
     }
     .mch-hdr-avatar {
-      width: 36px; height: 36px; border-radius: 50%; overflow: hidden;
-      border: 1.5px solid rgba(34,197,94,0.3); flex-shrink: 0;
+      width: 44px; height: 44px; border-radius: 50%; overflow: hidden;
+      border: 2px solid rgba(34,197,94,0.3); flex-shrink: 0;
     }
     .mch-hdr-avatar img { width: 100%; height: 100%; object-fit: cover; display: block; }
     .mch-hdr-info { flex: 1; min-width: 0; }
@@ -316,7 +315,7 @@
         border-radius: 0; border: none;
       }
       .mch-bubble-wrap { gap: 8px; }
-      .mch-avatar { width: 52px; height: 52px; }
+      .mch-avatar { width: 64px; height: 64px; }
       .mch-bubble { font-size: 12px; padding: 8px 12px; }
     }
   `;
@@ -534,11 +533,62 @@
     startSectionWatcher();
   }
 
+  // ─── Formatting ───
+  function formatText(text) {
+    const escaped = text.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+    return escaped
+      .replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>')
+      .replace(/\*(.+?)\*/g, '<em>$1</em>')
+      .replace(/^- (.+)$/gm, '&nbsp;&nbsp;• $1')
+      .replace(/\n/g, '<br>');
+  }
+
+  function saveMessages() {
+    const msgs = [];
+    chatBody.querySelectorAll('.mch-msg').forEach(el => {
+      const type = el.classList.contains('mch-msg-user') ? 'user' : 'bot';
+      const textEl = el.querySelector('.mch-msg-text');
+      if (textEl) msgs.push({ type, text: textEl.innerHTML });
+    });
+    if (msgs.length) localStorage.setItem('mch_messages', JSON.stringify(msgs));
+    else localStorage.removeItem('mch_messages');
+  }
+
+  function loadMessages() {
+    const saved = localStorage.getItem('mch_messages');
+    if (!saved) return;
+    try {
+      const msgs = JSON.parse(saved);
+      msgs.forEach(({ type, text }) => {
+        const msg = document.createElement('div');
+        msg.className = 'mch-msg mch-msg-' + type;
+        const textSpan = document.createElement('span');
+        textSpan.className = 'mch-msg-text';
+        textSpan.innerHTML = text;
+        msg.appendChild(textSpan);
+        const time = document.createElement('div');
+        time.className = 'mch-time';
+        time.textContent = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+        msg.appendChild(time);
+        chatBody.appendChild(msg);
+      });
+      chatBody.scrollTop = chatBody.scrollHeight;
+    } catch (e) {}
+  }
+
+  function clearMessages() {
+    localStorage.removeItem('mch_messages');
+    chatBody.innerHTML = '';
+  }
+
   // ─── Chat functions ───
   function addMsg(text, type) {
     const msg = document.createElement('div');
     msg.className = 'mch-msg mch-msg-' + type;
-    msg.textContent = text;
+    const textSpan = document.createElement('span');
+    textSpan.className = 'mch-msg-text';
+    textSpan.innerHTML = formatText(text);
+    msg.appendChild(textSpan);
     const time = document.createElement('div');
     time.className = 'mch-time';
     time.textContent = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
@@ -577,18 +627,28 @@
       sessionId = data.sessionId;
       localStorage.setItem('mch_session', sessionId);
       typing.remove();
-      const cleanReply = (data.reply || '').replace(/\*\*/g, '');
-      reply.textContent = cleanReply;
+      const textSpan = document.createElement('span');
+      textSpan.className = 'mch-msg-text';
+      textSpan.innerHTML = formatText(data.reply || '');
+      reply.appendChild(textSpan);
       const time = document.createElement('div');
       time.className = 'mch-time';
       time.textContent = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
       reply.appendChild(time);
       chatBody.appendChild(reply);
       chatBody.scrollTop = chatBody.scrollHeight;
+      saveMessages();
     })
     .catch(() => {
       typing.remove();
-      reply.textContent = 'Sorry, having trouble connecting. Reach us on WhatsApp at +919714571522 or email manharcreatives@gmail.com.';
+      const textSpan = document.createElement('span');
+      textSpan.className = 'mch-msg-text';
+      textSpan.textContent = 'Sorry, having trouble connecting. Reach us on WhatsApp at +919714571522 or email manharcreatives@gmail.com.';
+      reply.appendChild(textSpan);
+      const time = document.createElement('div');
+      time.className = 'mch-time';
+      time.textContent = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+      reply.appendChild(time);
       chatBody.appendChild(reply);
       chatBody.scrollTop = chatBody.scrollHeight;
     });
@@ -609,12 +669,16 @@
       const greeting = greetings[selectedLanguage] || greetings.english;
       const msg = document.createElement('div');
       msg.className = 'mch-msg mch-msg-bot';
-      msg.textContent = greeting;
+      const textSpan = document.createElement('span');
+      textSpan.className = 'mch-msg-text';
+      textSpan.innerHTML = formatText(greeting);
+      msg.appendChild(textSpan);
       const time = document.createElement('div');
       time.className = 'mch-time';
       time.textContent = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
       msg.appendChild(time);
       chatBody.appendChild(msg);
+      saveMessages();
     }
   }
 
@@ -623,6 +687,7 @@
     selectedLanguage = null;
     chatEl.classList.remove('mch-open');
     currentSectionIdx = -1;
+    clearMessages();
   }
 
   // ─── Events ───
@@ -651,7 +716,7 @@
     sessionId = '';
     selectedLanguage = null;
     localStorage.removeItem('mch_session');
-    chatBody.innerHTML = '';
+    clearMessages();
     fetch(baseUrl + '/api/chat', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
@@ -661,7 +726,10 @@
       localStorage.setItem('mch_session', sessionId);
       const msg = document.createElement('div');
       msg.className = 'mch-msg mch-msg-bot';
-      msg.textContent = data.reply;
+      const textSpan = document.createElement('span');
+      textSpan.className = 'mch-msg-text';
+      textSpan.innerHTML = formatText(data.reply || '');
+      msg.appendChild(textSpan);
       chatBody.appendChild(msg);
     }).catch(() => {});
   });
@@ -672,6 +740,7 @@
 
   // ─── Init ───
   document.body.appendChild(root);
+  loadMessages();
   setTimeout(tryActivate, 1000);
 
   if (sessionId) {
