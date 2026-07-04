@@ -138,6 +138,18 @@ async function chatWithLLM(messages) {
   throw lastErr || new Error('All API keys exhausted');
 }
 
+function getBody(req) {
+  if (typeof req.body === 'string') return JSON.parse(req.body);
+  if (typeof req.body === 'object' && req.body !== null) return req.body;
+  return new Promise((resolve, reject) => {
+    let raw = '';
+    req.setEncoding('utf8');
+    req.on('data', c => raw += c);
+    req.on('end', () => { try { resolve(JSON.parse(raw)); } catch (e) { reject(e); } });
+    req.on('error', reject);
+  });
+}
+
 export default async function handler(req, res) {
   res.setHeader('Access-Control-Allow-Origin', '*');
   res.setHeader('Access-Control-Allow-Methods', 'POST, OPTIONS');
@@ -147,17 +159,8 @@ export default async function handler(req, res) {
   if (req.method !== 'POST') return res.status(405).json({ error: 'Method not allowed' });
 
   try {
-    let bodyStr = '';
-    if (typeof req.body === 'string') bodyStr = req.body;
-    else if (typeof req.body === 'object' && req.body !== null) bodyStr = JSON.stringify(req.body);
-    else {
-      await new Promise(resolve => {
-        req.on('data', chunk => bodyStr += chunk);
-        req.on('end', resolve);
-      });
-    }
-    const body = JSON.parse(bodyStr);
-    const { message, sessionId } = body;
+    const body = await getBody(req);
+    const { message, sessionId = '' } = body;
 
     if (!message || !message.trim()) {
       return res.status(400).json({ error: 'Message is required' });
