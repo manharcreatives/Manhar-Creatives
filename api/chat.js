@@ -126,7 +126,7 @@ async function chatWithLLM(messages) {
           max_tokens: 800,
           temperature: 0.7
         }),
-        signal: AbortSignal.timeout(20000)
+        signal: AbortSignal.timeout ? AbortSignal.timeout(20000) : undefined
       });
       if (response.ok) {
         const data = await response.json();
@@ -145,16 +145,23 @@ export default async function handler(req, res) {
   res.setHeader('Access-Control-Allow-Methods', 'POST, OPTIONS');
   res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
 
-  if (req.method === 'OPTIONS') {
-    return res.status(200).end();
-  }
-
-  if (req.method !== 'POST') {
-    return res.status(405).json({ error: 'Method not allowed' });
-  }
+  if (req.method === 'OPTIONS') return res.status(200).end();
+  if (req.method !== 'POST') return res.status(405).json({ error: 'Method not allowed' });
 
   try {
-    const { message, sessionId } = req.body;
+    let body;
+    try {
+      body = typeof req.body === 'object' ? req.body : JSON.parse(req.body);
+    } catch {
+      let buf = '';
+      await new Promise(resolve => {
+        req.on('data', chunk => buf += chunk);
+        req.on('end', resolve);
+      });
+      body = JSON.parse(buf);
+    }
+
+    const { message, sessionId } = body;
 
     if (!message || !message.trim()) {
       return res.status(400).json({ error: 'Message is required' });
@@ -177,12 +184,11 @@ export default async function handler(req, res) {
     const reply = await chatWithLLM(session.messages);
 
     session.messages.push({ role: 'assistant', content: reply });
-
     if (session.messages.length > 20) {
       const systemMsg = session.messages[0];
       session.messages = [
         systemMsg,
-        { role: 'system', content: 'Previous context (summarized): The visitor has been asking about services and may be interested in starting a project.' },
+        { role: 'system', content: 'Previous context: visitor has been asking about services.' },
         ...session.messages.slice(-10)
       ];
     }
