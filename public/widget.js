@@ -540,7 +540,8 @@
       .replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>')
       .replace(/\*(.+?)\*/g, '<em>$1</em>')
       .replace(/^- (.+)$/gm, '&nbsp;&nbsp;• $1')
-      .replace(/\n/g, '<br>');
+      .replace(/\n/g, '<br>')
+      .replace(/https?:\/\/[^\s<]+/g, '<a href="$&" target="_blank" rel="noopener noreferrer" style="color:#22C55E;text-decoration:underline">$&</a>');
   }
 
   function saveMessages() {

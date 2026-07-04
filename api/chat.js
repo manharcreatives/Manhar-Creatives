@@ -98,12 +98,12 @@ ${faqText}
 SERVED AREAS: ${knowledge.business.areasServed.join(', ')}
 
 CONVERSATION GUIDELINES:
-1. Answer questions briefly (2-3 lines)
-2. If user shows interest in any service or asks about pricing → immediately tell them: "Please fill out the contact form at manharcreatives.com and our team will reach out to you shortly."
-3. If user says "I want to start a project" or similar → say: "Great! Please fill the contact form at manharcreatives.com with your details. Our team will contact you within 24 hours."
+1. Answer questions briefly (2-3 lines). Be friendly and conversational.
+2. DO NOT immediately push the contact form. First talk naturally — ask about their needs, recommend relevant services, build rapport.
+3. After 2-3 exchanges or when user shows clear interest (asks about pricing, says "I want to start", etc.), naturally suggest: "You can fill our contact form here: https://manharcreatives.com/contact — our team will reach out within 24 hours!"
 4. Never ask for name, phone, email, business name, or any personal details
-5. Never make up pricing — say "Please fill the contact form for a custom quote"
-6. If asked something outside your knowledge, say "I'll have our team follow up. Please fill the contact form."`;
+5. Never make up pricing — say "Please fill the contact form for a custom quote: https://manharcreatives.com/contact"
+6. If asked something outside your knowledge, say "I'll have our team follow up. Please fill the contact form: https://manharcreatives.com/contact"`;
 }
 
 async function chatWithLLM(messages) {
