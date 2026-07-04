@@ -48,6 +48,27 @@ const BACKUP_KEYS = [
   { key: process.env.LLM_KEY_5 || '', model: 'deepseek-chat' },
 ];
 
+// ─── Dead key blacklist ───
+const KEY_FAILURES = new Map();
+const MAX_FAILURES = 3;
+
+function getKeyId(provider) {
+  return provider.key ? provider.key.slice(0, 8) + '_' + provider.model : null;
+}
+
+function isKeyDead(provider) {
+  const id = getKeyId(provider);
+  return id ? (KEY_FAILURES.get(id) || 0) >= MAX_FAILURES : true;
+}
+
+function markKeyFailed(provider) {
+  const id = getKeyId(provider);
+  if (!id) return;
+  const count = (KEY_FAILURES.get(id) || 0) + 1;
+  KEY_FAILURES.set(id, count);
+  console.error(`Key ${id} failed (${count}/${MAX_FAILURES})`);
+}
+
 // ─── Session store ───
 const sessions = new Map();
 const SESSION_TTL = 30 * 60 * 1000;
@@ -112,32 +133,59 @@ CONVERSATION GUIDELINES:
 
 async function chatWithLLM(messages) {
   let lastErr = null;
+
   for (const provider of BACKUP_KEYS) {
     if (!provider.key) continue;
-    try {
-      const response = await fetch(LLM_BASE_URL, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': `Bearer ${provider.key}`
-        },
-        body: JSON.stringify({
-          model: provider.model,
-          messages: messages,
-          max_tokens: 800,
-          temperature: 0.7
-        }),
-        signal: AbortSignal.timeout ? AbortSignal.timeout(20000) : undefined
-      });
-      if (response.ok) {
-        const data = await response.json();
-        return data.choices[0].message.content;
+    if (isKeyDead(provider)) continue;
+
+    for (let attempt = 0; attempt < 2; attempt++) {
+      try {
+        const response = await fetch(LLM_BASE_URL, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${provider.key}`
+          },
+          body: JSON.stringify({
+            model: provider.model,
+            messages: messages,
+            max_tokens: 800,
+            temperature: 0.7
+          }),
+          signal: AbortSignal.timeout ? AbortSignal.timeout(30000) : undefined
+        });
+
+        if (response.ok) {
+          KEY_FAILURES.delete(getKeyId(provider));
+          const data = await response.json();
+          return data.choices[0].message.content;
+        }
+
+        lastErr = new Error(`Status ${response.status}`);
+        console.error(`Key ${getKeyId(provider)} attempt ${attempt + 1}: ${response.status} ${response.statusText}`);
+
+        if (response.status === 401 || response.status === 403) {
+          markKeyFailed(provider);
+          break;
+        }
+        if (response.status === 429) {
+          await new Promise(r => setTimeout(r, 1000));
+          continue;
+        }
+      } catch (e) {
+        lastErr = e;
+        console.error(`Key ${getKeyId(provider)} attempt ${attempt + 1}: ${e.message}`);
+        if (e.name === 'AbortError') {
+          await new Promise(r => setTimeout(r, 500));
+          continue;
+        }
       }
-      lastErr = new Error(`Status ${response.status}`);
-    } catch (e) {
-      lastErr = e;
     }
+
+    markKeyFailed(provider);
   }
+
+  console.error('All API keys exhausted, last error:', lastErr?.message);
   throw lastErr || new Error('All API keys exhausted');
 }
 
