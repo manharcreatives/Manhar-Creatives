@@ -37,17 +37,10 @@ const knowledge = {
   contactForm: { fields: ["name", "company", "email", "phone", "address", "type", "message", "contactMethod"], types: ["Website", "Branding", "Restaurant Solutions", "Print", "Digital Presence", "Other"] }
 };
 
-// ─── Backup API keys with failover ───
-const LLM_BASE_URL = 'https://aiapiv2.pekpik.com/v1/chat/completions';
-const LLM_KEY_REPO = 'https://raw.githubusercontent.com/alistaitsacle/free-llm-api-keys/main/README.md';
-
-const BACKUP_KEYS = [
-  { key: process.env.LLM_KEY_1 || 'sk-Tyfve899WmTSlzGxsgZDC6ZOtgAtJV5kqnh2206iGnUYhvw2', model: 'smart-chat' },
-  { key: process.env.LLM_KEY_2 || 'sk-lPeVrwNOVKWvCKZ5SYapDKwjxpstemFO8JeML7l2NiHyw5FP', model: 'smart-chat' },
-  { key: process.env.LLM_KEY_3 || 'sk-HXAYQBwTNp5oojdqlOwp4HZiozIKwB3GFSLRoGniZGQGvSPf', model: 'smart-chat' },
-  { key: process.env.LLM_KEY_4 || 'sk-b5UerT9mGOecD1nGUQtTtzr5GM45K7JhZcDGBb48hafdSsXM', model: 'deepseek-chat' },
-  { key: process.env.LLM_KEY_5 || 'sk-BpMiDqlrBQHhaCUYIPqiRyG4VedyYh7sXcaZXuref1gZIkqO', model: 'deepseek-chat' },
-];
+// ─── LLM Provider (Groq) ───
+const LLM_BASE_URL = 'https://api.groq.com/openai/v1/chat/completions';
+const LLM_MODEL = 'llama-3.1-8b-instant';
+const LLM_KEY = process.env.GROQ_API_KEY;
 
 // ─── Session store ───
 const sessions = new Map();
@@ -109,35 +102,23 @@ CONVERSATION GUIDELINES:
 }
 
 async function chatWithLLM(messages) {
-  let lastErr = null;
-
-  for (const provider of BACKUP_KEYS) {
-    if (!provider.key) continue;
-    try {
-      const response = await fetch(LLM_BASE_URL, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': `Bearer ${provider.key}`
-        },
-        body: JSON.stringify({
-          model: provider.model,
-          messages: messages,
-          max_tokens: 800,
-          temperature: 0.7
-        }),
-        signal: AbortSignal.timeout ? AbortSignal.timeout(20000) : undefined
-      });
-      if (response.ok) {
-        const data = await response.json();
-        return data.choices[0].message.content;
-      }
-      lastErr = new Error(`Status ${response.status}`);
-    } catch (e) {
-      lastErr = e;
-    }
-  }
-  throw lastErr || new Error('All API keys exhausted');
+  const response = await fetch(LLM_BASE_URL, {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+      'Authorization': `Bearer ${LLM_KEY}`
+    },
+    body: JSON.stringify({
+      model: LLM_MODEL,
+      messages: messages,
+      max_tokens: 800,
+      temperature: 0.7
+    }),
+    signal: AbortSignal.timeout ? AbortSignal.timeout(20000) : undefined
+  });
+  if (!response.ok) throw new Error(`Groq API: ${response.status}`);
+  const data = await response.json();
+  return data.choices[0].message.content;
 }
 
 export default async function handler(req, res) {
@@ -149,18 +130,16 @@ export default async function handler(req, res) {
   if (req.method !== 'POST') return res.status(405).json({ error: 'Method not allowed' });
 
   try {
-    let body;
-    try {
-      body = typeof req.body === 'object' ? req.body : JSON.parse(req.body);
-    } catch {
-      let buf = '';
+    let bodyStr = '';
+    if (typeof req.body === 'string') bodyStr = req.body;
+    else if (typeof req.body === 'object' && req.body !== null) bodyStr = JSON.stringify(req.body);
+    else {
       await new Promise(resolve => {
-        req.on('data', chunk => buf += chunk);
+        req.on('data', chunk => bodyStr += chunk);
         req.on('end', resolve);
       });
-      body = JSON.parse(buf);
     }
-
+    const body = JSON.parse(bodyStr);
     const { message, sessionId } = body;
 
     if (!message || !message.trim()) {
