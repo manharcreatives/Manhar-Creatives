@@ -41,33 +41,8 @@ const knowledge = {
 const LLM_BASE_URL = 'https://aiapiv2.pekpik.com/v1/chat/completions';
 
 const BACKUP_KEYS = [
-  { key: process.env.LLM_KEY_1 || '', model: 'smart-chat' },
-  { key: process.env.LLM_KEY_2 || '', model: 'smart-chat' },
-  { key: process.env.LLM_KEY_3 || '', model: 'smart-chat' },
-  { key: process.env.LLM_KEY_4 || '', model: 'deepseek-chat' },
   { key: process.env.LLM_KEY_5 || '', model: 'deepseek-chat' },
 ];
-
-// ─── Dead key blacklist ───
-const KEY_FAILURES = new Map();
-const MAX_FAILURES = 3;
-
-function getKeyId(provider) {
-  return provider.key ? provider.key.slice(0, 8) + '_' + provider.model : null;
-}
-
-function isKeyDead(provider) {
-  const id = getKeyId(provider);
-  return id ? (KEY_FAILURES.get(id) || 0) >= MAX_FAILURES : true;
-}
-
-function markKeyFailed(provider) {
-  const id = getKeyId(provider);
-  if (!id) return;
-  const count = (KEY_FAILURES.get(id) || 0) + 1;
-  KEY_FAILURES.set(id, count);
-  console.error(`Key ${id} failed (${count}/${MAX_FAILURES})`);
-}
 
 // ─── Session store ───
 const sessions = new Map();
@@ -94,10 +69,11 @@ LANGUAGE: The user selected ${langNames[language] || 'English'}. You MUST respon
 
 YOUR ROLE:
 - Answer questions about Manhar Creatives and their services
-- Help visitors understand what the agency offers
-- Collect basic information when someone wants to start a project
 - Be friendly, professional, and helpful
+- Keep responses SHORT — 2-3 lines max
 - You can respond in English, Hindi, or Gujarati based on the visitor's language
+
+CRITICAL RULE — DO NOT ask the user for any details about their business, project, requirements, or personal information. Never ask "what business do you have?", "what's your project?", "tell me more about..." etc.
 
 BUSINESS INFO:
 - Name: ${knowledge.business.name}
@@ -122,71 +98,50 @@ ${faqText}
 SERVED AREAS: ${knowledge.business.areasServed.join(', ')}
 
 CONVERSATION GUIDELINES:
-1. First ask about their business/needs
-2. Recommend relevant services based on their description
-3. If they're interested, collect: name, phone, email, business name, and service needed
-4. Never make up pricing — tell them pricing depends on scope and they should contact for a quote
-5. At the end, offer to connect them via WhatsApp or have someone call them
-6. Keep responses concise and helpful
-7. If asked something outside your knowledge, say you'll have a team member follow up`;
+1. Answer questions briefly (2-3 lines)
+2. If user shows interest in any service or asks about pricing → immediately tell them: "Please fill out the contact form at manharcreatives.com and our team will reach out to you shortly."
+3. If user says "I want to start a project" or similar → say: "Great! Please fill the contact form at manharcreatives.com with your details. Our team will contact you within 24 hours."
+4. Never ask for name, phone, email, business name, or any personal details
+5. Never make up pricing — say "Please fill the contact form for a custom quote"
+6. If asked something outside your knowledge, say "I'll have our team follow up. Please fill the contact form."`;
 }
 
 async function chatWithLLM(messages) {
-  let lastErr = null;
+  const provider = BACKUP_KEYS[0];
+  if (!provider || !provider.key) throw new Error('No API key configured');
 
-  for (const provider of BACKUP_KEYS) {
-    if (!provider.key) continue;
-    if (isKeyDead(provider)) continue;
+  for (let attempt = 0; attempt < 3; attempt++) {
+    try {
+      const response = await fetch(LLM_BASE_URL, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${provider.key}`
+        },
+        body: JSON.stringify({
+          model: provider.model,
+          messages: messages,
+          max_tokens: 800,
+          temperature: 0.7
+        }),
+        signal: AbortSignal.timeout ? AbortSignal.timeout(45000) : undefined
+      });
 
-    for (let attempt = 0; attempt < 2; attempt++) {
-      try {
-        const response = await fetch(LLM_BASE_URL, {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-            'Authorization': `Bearer ${provider.key}`
-          },
-          body: JSON.stringify({
-            model: provider.model,
-            messages: messages,
-            max_tokens: 800,
-            temperature: 0.7
-          }),
-          signal: AbortSignal.timeout ? AbortSignal.timeout(30000) : undefined
-        });
-
-        if (response.ok) {
-          KEY_FAILURES.delete(getKeyId(provider));
-          const data = await response.json();
-          return data.choices[0].message.content;
-        }
-
-        lastErr = new Error(`Status ${response.status}`);
-        console.error(`Key ${getKeyId(provider)} attempt ${attempt + 1}: ${response.status} ${response.statusText}`);
-
-        if (response.status === 401 || response.status === 403) {
-          markKeyFailed(provider);
-          break;
-        }
-        if (response.status === 429) {
-          await new Promise(r => setTimeout(r, 1000));
-          continue;
-        }
-      } catch (e) {
-        lastErr = e;
-        console.error(`Key ${getKeyId(provider)} attempt ${attempt + 1}: ${e.message}`);
-        if (e.name === 'AbortError') {
-          await new Promise(r => setTimeout(r, 500));
-          continue;
-        }
+      if (response.ok) {
+        const data = await response.json();
+        return data.choices[0].message.content;
       }
-    }
 
-    markKeyFailed(provider);
+      console.error(`deepseek attempt ${attempt + 1}: ${response.status}`);
+      if (response.status === 429) await new Promise(r => setTimeout(r, 2000));
+      else await new Promise(r => setTimeout(r, 1000));
+    } catch (e) {
+      console.error(`deepseek attempt ${attempt + 1}: ${e.message}`);
+      await new Promise(r => setTimeout(r, 1000));
+    }
   }
 
-  console.error('All API keys exhausted, last error:', lastErr?.message);
-  throw lastErr || new Error('All API keys exhausted');
+  throw new Error('Deepseek API failed after 3 attempts');
 }
 
 function getBody(req) {
