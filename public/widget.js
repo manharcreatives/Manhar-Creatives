@@ -15,6 +15,9 @@
   const baseUrl = (scriptTag ? scriptTag.src.substring(0, scriptTag.src.lastIndexOf('/')) : '') || window.location.origin;
   const BOT_IMG = '/images/manhar-bot.png';
 
+  const CLOSE_SVG = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>';
+  const SEND_SVG = '<svg viewBox="0 0 24 24" fill="currentColor"><path d="M2.01 21L23 12 2.01 3 2 10l15 2-15 2z"/></svg>';
+
   // ─── State ───
   let sessionId = localStorage.getItem('mch_session') || '';
   let chatOpen = false;
