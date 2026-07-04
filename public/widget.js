@@ -461,32 +461,29 @@
     }, 400);
   }
 
-  // ─── Section tracking ───
-  let sectionObserver = null;
+  // ─── Section tracking (scroll-based, Lenis-compatible) ───
+  let sectionRaf = null;
   let sectionWatchActive = false;
 
   function activateNextSection() {
     if (sectionWatchActive) return;
     sectionWatchActive = true;
 
-    const els = sections.map(s => document.querySelector(s.id)).filter(Boolean);
-    if (els.length === 0) return;
-
-    const observer = new IntersectionObserver((entries) => {
-      for (const entry of entries) {
-        if (!entry.isIntersecting) continue;
-        const idx = els.indexOf(entry.target);
-        if (idx < 0 || idx <= currentSectionIdx) continue;
-        currentSectionIdx = idx;
-        observer.disconnect();
-        sectionWatchActive = false;
-        setTimeout(() => showBot(sections[idx].pos), 500);
-        break;
+    function check() {
+      for (let i = currentSectionIdx + 1; i < sections.length; i++) {
+        const el = document.querySelector(sections[i].id);
+        if (!el) continue;
+        const rect = el.getBoundingClientRect();
+        if (rect.top < window.innerHeight * 0.65) {
+          currentSectionIdx = i;
+          sectionWatchActive = false;
+          setTimeout(() => showBot(sections[i].pos), 500);
+          return;
+        }
       }
-    }, { threshold: 0.3 });
-
-    els.forEach(el => observer.observe(el));
-    sectionObserver = observer;
+      sectionRaf = requestAnimationFrame(check);
+    }
+    sectionRaf = requestAnimationFrame(check);
   }
 
   // ─── Initial activation ───
@@ -497,14 +494,16 @@
     const preloader = document.querySelector('.preloader');
     if (preloader) { setTimeout(tryActivate, 500); return; }
 
-    const heroObs = new IntersectionObserver((entries) => {
-      for (const e of entries) {
-        if (e.isIntersecting) return;
-        heroObs.disconnect();
-        setTimeout(() => showBot(sections[0].pos), 600);
+    function checkHero() {
+      const h = document.querySelector('#hero');
+      if (!h) { setTimeout(checkHero, 500); return; }
+      if (h.getBoundingClientRect().bottom > 0) {
+        setTimeout(checkHero, 150);
+        return;
       }
-    }, { threshold: 0 });
-    heroObs.observe(hero);
+      setTimeout(() => showBot(sections[0].pos), 600);
+    }
+    setTimeout(checkHero, 300);
   }
 
   // ─── Chat functions ───
@@ -577,7 +576,7 @@
     chatEl.classList.remove('mch-open');
     currentSectionIdx = 0;
     sectionWatchActive = false;
-    if (sectionObserver) { sectionObserver.disconnect(); sectionObserver = null; }
+    if (sectionRaf) { cancelAnimationFrame(sectionRaf); sectionRaf = null; }
     activateNextSection();
   }
 
